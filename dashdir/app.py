@@ -54,10 +54,13 @@ app.layout = html.Div(
             [
                 dcc.Markdown(
                     """
-            ### EOSC 310: Daisyworld
+            ### Welcome to Daisyworld!
             
-            Explore daisyworld! 
-            ----------
+            ----------  
+
+            Explore daisyworld! First plot is a static non-interactive plot of daisy growth rates to get warmed up with dash...
+
+            ___
             """
                 ),
             ],
@@ -83,8 +86,8 @@ app.layout = html.Div(
                 dcc.Markdown(
                     """
                 ----------
-                Adjust the sliders below to change the albedo of white and black daisies,
-                and also the albedo of the planetary surface. 
+                Now make an interative plot: Adjust the sliders below to change the albedo of white and black daisies,
+                and of the planetary surface. 
                 """
                 ),
             ],
