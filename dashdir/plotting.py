@@ -3,6 +3,8 @@ import plotly.figure_factory as ff
 import numpy as np
 import calculations as calc
 
+from plotly.subplots import make_subplots
+
 
 def initialize_albedo_plot(T_min, T_opt):
     # how does the growth curve of the Daisies look like?
@@ -214,7 +216,7 @@ def constant_flux_area(
 
     #####
     # area plot:
-    fig = go.Figure()
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_hrect(
         xref="paper",
         yref="paper",
@@ -227,26 +229,32 @@ def constant_flux_area(
         opacity=1,
     )
     fig.update_xaxes(showgrid=True, zeroline=False)
-    fig.update_yaxes(showgrid=True, zeroline=False)
+    fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=True)
     fig.add_trace(
-        go.Scatter(
-            x=gens,
-            y=[x["Sw"] for x in xgens],
-            name="White daisies area",
-        )
+        go.Scatter(x=gens, y=[x["Sw"] for x in xgens], name="White daisies area"),
+        secondary_y=False,
+    )
+    fig.add_trace(
+        go.Scatter(x=gens, y=[x["Sb"] for x in xgens], name="Black daisies area"),
+        secondary_y=False,
+    )
+    fig.add_trace(
+        go.Scatter(x=gens, y=[x["Su"] for x in xgens], name="Uninhabited area"),
+        secondary_y=False,
     )
     fig.add_trace(
         go.Scatter(
             x=gens,
-            y=[x["Sb"] for x in xgens],
-            name="Black daisies area",
-        )
+            y=[x["Ap"] for x in xgens],
+            name="Combined albedo",
+            line=dict(color="royalblue", dash="dot"),
+        ),
+        secondary_y=True,
     )
-    fig.add_trace(
-        go.Scatter(x=gens, y=[x["Su"] for x in xgens], name="Uninhabited area")
-    )
-
-    fig.update_layout(xaxis_title="Generation number", yaxis_title="Fractional area")
+    # fig.update_layout(xaxis_title="Generation number", yaxis_title="Fractional area")
+    fig.update_xaxes(title_text="Generation")
+    fig.update_yaxes(title_text="Fractional area", secondary_y=False)
+    fig.update_yaxes(title_text="Albedo", secondary_y=True)
     fig.update_xaxes(range=[0, ngen])
     fig.update_yaxes(range=[0, 1])
     fig.layout.title = "Constant flux daisy coverage"
