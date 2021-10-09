@@ -1,6 +1,7 @@
 # file app.py
 
 # bastardizing this model for now at https://github.com/strawpants/daisyworld
+# http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
 
 import dash
 from dash import dcc
@@ -57,10 +58,24 @@ app.layout = html.Div(
             ### Welcome to Daisyworld!
             
             ----------  
-
-            Explore daisyworld! First plot is a static non-interactive plot of daisy growth rates to get warmed up with dash...
-
-            ___
+            The biota have effected profound changes on the environment 
+            of the surface of the earth. At the same time, that environment has 
+            imposed constraints on the biota, so that life and the environment 
+            may be considered as two parts of a coupled system. Unfortunately, the 
+            system is too complex and too little known for us to model it adequately. 
+            To investigate the properties which this close-coupling might confer on 
+            the system, we chose to develop a model of an imaginary planet having 
+            a very simple biosphere. It consisted of just two species of daisy of 
+            different colours and was first described by Lovelock (1982). 
+            The growth rate of the daisies depends on only one environmental 
+            variable, temperature, which the daisies in turn modify because they 
+            absorb different amounts of radiation. Regardless of the details of the 
+            interaction, the effect of the daisies is to stabilize the temperature. 
+            The result arises because of the peaked shape of the growth-temperature 
+            curve and is independent of the mechanics by which the biota are assumed 
+            to modify the temperature. We sketch out the elements of a biological 
+            feedback system which might help regulate the temperature of the earth."
+            - From [BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT: THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             """
                 ),
             ],
@@ -74,19 +89,19 @@ app.layout = html.Div(
                 "margin-left": 20,
             },
         ),
-        html.Div(
-            [
-                dcc.Graph(figure=albedo_plot),
-            ],
-            style={"width": "100%", "display": "inline-block"},
-        ),
+        # html.Div(
+        #     [
+        #         dcc.Graph(figure=albedo_plot),
+        #     ],
+        #     style={"width": "100%", "display": "inline-block"},
+        # ),
         ###
         html.Div(
             [
                 dcc.Markdown(
                     """
                 ----------
-                Now make an interative plot: Adjust the sliders below to change the albedo of white and black daisies,
+                Make an interative plot: Adjust the sliders below to change the albedo of white and black daisies,
                 and of the planetary surface. 
                 """
                 ),
@@ -173,7 +188,7 @@ app.layout = html.Div(
                     """
                 #### Sources
                 
-                1. Jacked from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld)
+                1. Methods from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld) by Roelof Rietbroek
                 ----------
                 """
                 ),
