@@ -1,6 +1,7 @@
 # file app.py
 
 # bastardizing this model for now at https://github.com/strawpants/daisyworld
+# http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
 
 import dash
 from dash import dcc
@@ -40,7 +41,10 @@ Fsnom = 3668  # nominal Flux in W/m^2
 
 ##############################
 albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
-constant_flux_plot = plot.constant_flux_plot(
+constant_flux_temp = plot.constant_flux_temp(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+)
+constant_flux_area = plot.constant_flux_area(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
 
@@ -51,10 +55,27 @@ app.layout = html.Div(
             [
                 dcc.Markdown(
                     """
-            ### EOSC 310: Daisyworld
+            ### Welcome to Daisyworld!
             
-            Explore daisyworld! 
-            ----------
+            ----------  
+            The biota have effected profound changes on the environment 
+            of the surface of the earth. At the same time, that environment has 
+            imposed constraints on the biota, so that life and the environment 
+            may be considered as two parts of a coupled system. Unfortunately, the 
+            system is too complex and too little known for us to model it adequately. 
+            To investigate the properties which this close-coupling might confer on 
+            the system, we chose to develop a model of an imaginary planet having 
+            a very simple biosphere. It consisted of just two species of daisy of 
+            different colours and was first described by Lovelock (1982). 
+            The growth rate of the daisies depends on only one environmental 
+            variable, temperature, which the daisies in turn modify because they 
+            absorb different amounts of radiation. Regardless of the details of the 
+            interaction, the effect of the daisies is to stabilize the temperature. 
+            The result arises because of the peaked shape of the growth-temperature 
+            curve and is independent of the mechanics by which the biota are assumed 
+            to modify the temperature. We sketch out the elements of a biological 
+            feedback system which might help regulate the temperature of the earth."
+            - From [BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT: THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             """
                 ),
             ],
@@ -68,20 +89,20 @@ app.layout = html.Div(
                 "margin-left": 20,
             },
         ),
-        html.Div(
-            [
-                dcc.Graph(figure=albedo_plot),
-            ],
-            style={"width": "100%", "display": "inline-block"},
-        ),
+        # html.Div(
+        #     [
+        #         dcc.Graph(figure=albedo_plot),
+        #     ],
+        #     style={"width": "100%", "display": "inline-block"},
+        # ),
         ###
         html.Div(
             [
                 dcc.Markdown(
                     """
                 ----------
-                Adjust the sliders below to change the albedo of white and black daisies,
-                and also the albedo of the planetary surface. 
+                Make an interative plot: Adjust the sliders below to change the albedo of white and black daisies,
+                and of the planetary surface. 
                 """
                 ),
             ],
@@ -151,7 +172,13 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Graph(id="constant_flux_plot"),
+                dcc.Graph(id="constant_flux_temp"),
+            ],
+            style={"width": "100%", "display": "inline-block"},
+        ),
+        html.Div(
+            [
+                dcc.Graph(id="constant_flux_area"),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
@@ -161,7 +188,7 @@ app.layout = html.Div(
                     """
                 #### Sources
                 
-                1. Jacked from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld)
+                1. Methods from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld) by Roelof Rietbroek
                 ----------
                 """
                 ),
@@ -181,16 +208,31 @@ app.layout = html.Div(
 )
 #################
 @app.callback(
-    Output(component_id="constant_flux_plot", component_property="figure"),
+    Output(component_id="constant_flux_temp", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
     Input(component_id="Ap", component_property="value"),
 )
-def update_constant_flux_plot(Aw, Ab, Ap):
+def update_constant_flux_temp(Aw, Ab, Ap):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
-    return plot.constant_flux_plot(
+    return plot.constant_flux_temp(
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    )
+
+
+@app.callback(
+    Output(component_id="constant_flux_area", component_property="figure"),
+    Input(component_id="Aw", component_property="value"),
+    Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
+)
+def update_constant_flux_area(Aw, Ab, Ap):
+    Albedo["w"] = Aw
+    Albedo["b"] = Ab
+    Albedo["none"] = Ap
+    return plot.constant_flux_area(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
     )
 
