@@ -425,6 +425,6 @@ def varying_solar_flux_area(
 
     fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
     fig.update_yaxes(title="Fractional area", range=[0, 1])
-    fig.update_layout(title_text="Equilibrium temperature vs solar flux")
+    fig.update_layout(title_text="Equilibrium area vs solar flux")
 
     return fig
