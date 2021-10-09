@@ -40,7 +40,7 @@ minarea = 0.01  # minimum area as a fraction occupied by each species
 Fsnom = 3668  # nominal Flux in W/m^2
 
 ##############################
-albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
+# albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
 constant_flux_temp = plot.constant_flux_temp(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
@@ -48,6 +48,18 @@ constant_flux_area = plot.constant_flux_area(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
 
+varying_solar_flux_temp = plot.varying_solar_flux_temp(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+)
+
+varying_solar_flux_area = plot.varying_solar_flux_area(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+)
+xs = list(range(30))
+ys = [10000 * 1.07 ** i for i in xs]
+fig = go.Figure(data=go.Scatter(x=xs, y=ys))
+fig.update_layout(xaxis_title="Years", yaxis_title="$")
+##
 
 app.layout = html.Div(
     [
@@ -182,6 +194,20 @@ app.layout = html.Div(
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
+        ##
+        html.Div(
+            [
+                dcc.Graph(figure=varying_solar_flux_temp),
+            ],
+            style={"width": "100%", "display": "inline-block"},
+        ),
+        html.Div(
+            [
+                dcc.Graph(figure=varying_solar_flux_area),
+            ],
+            style={"width": "100%", "display": "inline-block"},
+        ),
+        ##
         html.Div(
             [
                 dcc.Markdown(

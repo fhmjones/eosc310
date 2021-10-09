@@ -64,3 +64,118 @@ def NextState(x, F, rat, em_p, sig, ins_p, Albedo, death, minarea, T_min, T_opt)
     UpdateAreas(xnew, death, minarea, T_min, T_opt)
     UpdateAlbedo(xnew, Albedo)
     return xnew
+
+
+# To aid this exercise write and additional function which updates
+# the state vector until  no noticable change in temperature is happening
+def Equi_state(x0, F, rat, em_p, sig, ins_p, Albedo, death, minarea, T_min, T_opt):
+    dT = 2
+    x = x0.copy()
+    temp = x["Tp"]
+    while dT > 0.05:
+        x = NextState(x, F, rat, em_p, sig, ins_p, Albedo, death, minarea, T_min, T_opt)
+        dT = abs(temp - x["Tp"])
+        temp = x["Tp"]
+    return x
+
+
+def update_equi_flux(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+):
+    # Experiment 2 Planet response to varying solar flux
+
+    # set up variation of solar radiation
+    nt = 200
+    # amount of steps
+    Fracmin = 0.6
+    Fracmax = 1.65
+    dF = (Fracmax - Fracmin) / nt
+    F = [dF * i + Fracmin for i in range(nt)]
+
+    # set up initial condition
+    # initial condition state vector
+    x0 = {}
+    x0["Sw"] = 0.01
+    x0["Sb"] = 0.01
+    # compute barren area automatically
+    x0["Su"] = 1 - x0["Sw"] - x0["Sb"]
+
+    # note that we also need to initiate the planetary Albedo
+    UpdateAlbedo(x0, Albedo)
+    # and the temperature
+    UpdateTemp(x0, F[0] * Fsnom, rat, em_p, sig, ins_p, Albedo)
+
+    # initial condition for a barren planet
+    x0bar = {}
+    x0bar["Sw"] = 0
+    x0bar["Sb"] = 0
+    x0bar["Su"] = 1
+    # note that we also need to set the planetary Albedo
+    UpdateAlbedo(x0bar, Albedo)
+    # and the temperature
+    UpdateTemp(x0bar, F[0] * Fsnom, rat, em_p, sig, ins_p, Albedo)
+
+    # loop over radiation variation
+    xeq = []
+    xeq.append(x0)
+    xeqbar = []
+    xeqbar.append(x0bar)
+
+    for Fr in F[1:]:
+        xeq.append(
+            Equi_state(
+                xeq[-1],
+                Fr * Fsnom,
+                rat,
+                em_p,
+                sig,
+                ins_p,
+                Albedo,
+                death,
+                minarea,
+                T_min,
+                T_opt,
+            )
+        )
+        xeqbar.append(
+            Equi_state(
+                xeqbar[-1],
+                Fr * Fsnom,
+                rat,
+                em_p,
+                sig,
+                ins_p,
+                Albedo,
+                death,
+                minarea,
+                T_min,
+                T_opt,
+            )
+        )
+
+    # also run the  experiment backwards
+    # (use the end value of the forward run as starting point)
+    xeqinv = []
+    xeqinv.append(xeq[-1])
+
+    for Fr in F[::-1]:
+        xeqinv.append(
+            Equi_state(
+                xeqinv[-1],
+                Fr * Fsnom,
+                rat,
+                em_p,
+                sig,
+                ins_p,
+                Albedo,
+                death,
+                minarea,
+                T_min,
+                T_opt,
+            )
+        )
+
+    # reverse the vector
+    xeqinv = xeqinv[::-1][1:]
+
+    return (xeq, xeqbar, xeqinv, F)
