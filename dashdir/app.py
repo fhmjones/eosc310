@@ -5,6 +5,7 @@
 import dash
 from dash import dcc
 from dash import html
+from dash.development.base_component import Component
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
@@ -38,7 +39,6 @@ minarea = 0.01  # minimum area as a fraction occupied by each species
 Fsnom = 3668  # nominal Flux in W/m^2
 
 ##############################
-
 albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
 constant_flux_plot = plot.constant_flux_plot(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
@@ -74,9 +74,84 @@ app.layout = html.Div(
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
+        ###
         html.Div(
             [
-                dcc.Graph(figure=constant_flux_plot),
+                dcc.Markdown(
+                    """
+                ----------
+                Adjust the sliders below to change the albedo of white and black daisies,
+                and also the albedo of the planetary surface. 
+                """
+                ),
+            ],
+            style={
+                "width": "100%",
+                "display": "inline-block",
+                "padding": "0 20",
+                "vertical-align": "middle",
+                "margin-bottom": 30,
+                "margin-right": 50,
+                "margin-left": 20,
+            },
+        ),
+        ###
+        html.Div(
+            [
+                dcc.Markdown(""" White daisy albedo:"""),
+                dcc.Slider(
+                    id="Aw",
+                    min=0.5,
+                    max=1,
+                    step=0.05,
+                    value=Albedo["w"],
+                    marks={0.5: "0.5", 1: "1"},
+                    tooltip={"always_visible": True, "placement": "topLeft"},
+                ),
+            ],
+            style={
+                "width": "37%",
+                "display": "inline-block",
+                "vertical-align": "top",
+            },
+        ),
+        html.Div(
+            [
+                dcc.Markdown(""" Black daisy albedo: """),
+                dcc.Slider(
+                    id="Ab",
+                    min=0,
+                    max=0.5,
+                    step=0.05,
+                    value=Albedo["b"],
+                    marks={0: "0", 0.5: "0.5"},
+                    tooltip={"always_visible": True, "placement": "topLeft"},
+                ),
+            ],
+            style={"width": "37%", "display": "inline-block", "vertical-align": "top"},
+        ),
+        html.Div(
+            [
+                dcc.Markdown(""" Background albedo:"""),
+                dcc.Slider(
+                    id="Ap",
+                    min=0,
+                    max=1,
+                    step=0.05,
+                    value=Albedo["none"],
+                    marks={0: "0", 1: "1"},
+                    tooltip={"always_visible": True, "placement": "topRight"},
+                ),
+            ],
+            style={
+                "width": "37%",
+                "display": "inline-block",
+                "vertical-align": "top",
+            },
+        ),
+        html.Div(
+            [
+                dcc.Graph(id="constant_flux_plot"),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
@@ -105,6 +180,19 @@ app.layout = html.Div(
     style={"width": "1000px"},
 )
 #################
+@app.callback(
+    Output(component_id="constant_flux_plot", component_property="figure"),
+    Input(component_id="Aw", component_property="value"),
+    Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
+)
+def update_constant_flux_plot(Aw, Ab, Ap):
+    Albedo["w"] = Aw
+    Albedo["b"] = Ab
+    Albedo["none"] = Ap
+    return plot.constant_flux_plot(
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    )
 
 
 if __name__ == "__main__":

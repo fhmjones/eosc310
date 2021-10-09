@@ -126,7 +126,7 @@ def constant_flux_plot(
 
     fig.update_layout(xaxis_title="Generation number", yaxis_title="Temperature [degC]")
     fig.update_xaxes(range=[0, ngen])
-    fig.update_yaxes(range=[0, 35])
+    fig.update_yaxes(range=[0, 50])
     fig.layout.title = "Constant flux temperature with daisy generation"
 
     #####
