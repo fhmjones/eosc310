@@ -260,3 +260,171 @@ def constant_flux_area(
     fig.layout.title = "Constant flux daisy coverage"
 
     return fig
+
+
+def varying_solar_flux_temp(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+):
+    xeq, xeqbar, xeqinv, F = calc.update_equi_flux(
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    )
+    # fig = go.Figure(data=go.Scatter(x=F, y=[x["Tw"] - 273.15 for x in xeq]))
+    ##
+    # # fig = make_subplots(rows=1, cols=2, subplot_titles=("Plot1", "Plot2"))
+    fig = go.Figure()
+    fig.add_hrect(
+        xref="paper",
+        yref="paper",
+        x0=1,
+        x1=1.5,
+        y0=-15,
+        y1=100,
+        line_width=0,
+        fillcolor="white",
+        opacity=1,
+    )
+    # # subplot 1
+    fig.update_xaxes(showgrid=True, zeroline=False)
+    fig.update_yaxes(showgrid=True, zeroline=False)
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tw"] - 273.15 for x in xeq],
+            name="White daisies temperature",
+            line=dict(color="royalblue"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tw"] - 273.15 for x in xeqinv],
+            name="White daisies temperature (backwards)",
+            line=dict(color="royalblue", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tb"] - 273.15 for x in xeq],
+            name="Black daisies temperature",
+            line=dict(color="red"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tb"] - 273.15 for x in xeqinv],
+            name="Black daisies temperature (backwards)",
+            line=dict(color="red", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tp"] - 273.15 for x in xeq],
+            name="Planet temperature",
+            line=dict(color="black"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tp"] - 273.15 for x in xeqinv],
+            name="Planet temperature (backwards)",
+            line=dict(color="black", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Tp"] - 273.15 for x in xeqbar],
+            name="Planet temperature (without life)",
+            line=dict(color="gray", dash="dash"),
+        ),
+    )
+
+    fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
+    fig.update_yaxes(title="Temperature [degC]", range=[-20, 80])
+    fig.update_layout(title_text="Equilibrium temperature vs solar flux")
+
+    return fig
+
+
+def varying_solar_flux_area(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+):
+    xeq, xeqbar, xeqinv, F = calc.update_equi_flux(
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    )
+    # fig = go.Figure(data=go.Scatter(x=F, y=[x["Tw"] - 273.15 for x in xeq]))
+    ##
+    # # fig = make_subplots(rows=1, cols=2, subplot_titles=("Plot1", "Plot2"))
+    fig = go.Figure()
+    fig.add_hrect(
+        xref="paper",
+        yref="paper",
+        x0=1,
+        x1=1.5,
+        y0=-15,
+        y1=100,
+        line_width=0,
+        fillcolor="white",
+        opacity=1,
+    )
+    # # subplot 1
+    fig.update_xaxes(showgrid=True, zeroline=False)
+    fig.update_yaxes(showgrid=True, zeroline=False)
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Sw"] for x in xeq],
+            name="White daisies area",
+            line=dict(color="blue", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Sw"] for x in xeqinv],
+            name="White daisies area (backwards)",
+            line=dict(color="blue", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Sb"] for x in xeq],
+            name="Black daisies area",
+            line=dict(color="red"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Sb"] for x in xeqinv],
+            name="Black daisies area (backwards)",
+            line=dict(color="red", dash="dot"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Su"] for x in xeq],
+            name="Uninhabited area",
+            line=dict(color="black"),
+        ),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=F,
+            y=[x["Su"] for x in xeqinv],
+            name="Uninhabited area (backwards)",
+            line=dict(color="black", dash="dot"),
+        ),
+    )
+
+    fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
+    fig.update_yaxes(title="Fractional area", range=[0, 1])
+    fig.update_layout(title_text="Equilibrium temperature vs solar flux")
+
+    return fig
