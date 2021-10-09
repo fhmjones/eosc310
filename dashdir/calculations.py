@@ -179,3 +179,46 @@ def update_equi_flux(
     xeqinv = xeqinv[::-1][1:]
 
     return (xeq, xeqbar, xeqinv, F)
+
+
+def update_constant_flux(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
+):
+    # First experiment
+    F = Fsnom * 1  # solar radiation
+
+    # initial condition state vector
+    x0 = {}
+    x0["Sw"] = areas["w"]
+    x0["Sb"] = areas["b"]
+    x0["Su"] = 1 - x0["Sw"] - x0["Sb"]
+    # note that we also need to initiate the planetary Albedo
+    UpdateAlbedo(x0, Albedo)
+    # and the temperature
+    UpdateTemp(x0, F, rat, em_p, sig, ins_p, Albedo)
+
+    # loop over generations
+    ngen = 40
+
+    xgens = []
+    xgens.append(x0)
+    for g in range(ngen - 1):
+        xgens.append(
+            NextState(
+                xgens[-1],
+                F,
+                rat,
+                em_p,
+                sig,
+                ins_p,
+                Albedo,
+                death,
+                minarea,
+                T_min,
+                T_opt,
+            )
+        )
+
+    gens = [i for i in range(ngen)]
+
+    return xgens, gens
