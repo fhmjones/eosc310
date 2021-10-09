@@ -379,7 +379,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeq],
             name="White daisies area",
-            line=dict(color="blue", dash="dot"),
+            line=dict(color="blue"),
         ),
     )
     fig.add_trace(
