@@ -35,3 +35,32 @@ def DaisyGrowth(T, bwtype, T_min, T_opt):
         return 0
     else:
         return Gw
+
+
+# function to update areas based on growth rate and death rate
+def UpdateAreas(x, death, minarea, T_min, T_opt):
+
+    for Stype in ["w", "b"]:
+        grwth = DaisyGrowth(x["T" + Stype], Stype, T_min, T_opt)
+        ArType = "S" + Stype
+        Ds = x[ArType] * (grwth * x["Su"] - death[Stype])
+        # the following code applies 2 checks
+        # (1) keep the area to zero if it has been
+        # articifically set to exactly zero
+        if x[ArType] > 0:
+            x[ArType] += Ds
+            # (2) apply the minimum area if the area comes below the threshold
+            if x[ArType] < minarea:
+                x[ArType] = minarea
+
+    # update barren area (that what is left)
+    x["Su"] = 1 - x["Sw"] - x["Sb"]
+
+
+def NextState(x, F, rat, em_p, sig, ins_p, Albedo, death, minarea, T_min, T_opt):
+    # make a copy of the previous statevector to work on
+    xnew = x.copy()
+    UpdateTemp(xnew, F, rat, em_p, sig, ins_p, Albedo)
+    UpdateAreas(xnew, death, minarea, T_min, T_opt)
+    UpdateAlbedo(xnew, Albedo)
+    return xnew

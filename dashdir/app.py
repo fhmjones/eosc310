@@ -40,6 +40,9 @@ Fsnom = 3668  # nominal Flux in W/m^2
 ##############################
 
 albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
+constant_flux_plot = plot.constant_flux_plot(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+)
 
 
 app.layout = html.Div(
@@ -68,6 +71,12 @@ app.layout = html.Div(
         html.Div(
             [
                 dcc.Graph(figure=albedo_plot),
+            ],
+            style={"width": "100%", "display": "inline-block"},
+        ),
+        html.Div(
+            [
+                dcc.Graph(figure=constant_flux_plot),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
