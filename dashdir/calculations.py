@@ -182,15 +182,15 @@ def update_equi_flux(
 
 
 def update_constant_flux(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
 ):
     # First experiment
     F = Fsnom * 1  # solar radiation
 
     # initial condition state vector
     x0 = {}
-    x0["Sw"] = 0.01
-    x0["Sb"] = 0.01
+    x0["Sw"] = areas["w"]
+    x0["Sb"] = areas["b"]
     x0["Su"] = 1 - x0["Sw"] - x0["Sb"]
     # note that we also need to initiate the planetary Albedo
     UpdateAlbedo(x0, Albedo)

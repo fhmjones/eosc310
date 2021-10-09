@@ -49,11 +49,11 @@ def initialize_albedo_plot(T_min, T_opt):
 
 
 def constant_flux_temp(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
 ):
     # solve the constant flux problem:
     xgens, gens = calc.update_constant_flux(
-        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
 
     # temperatures plot
@@ -99,11 +99,11 @@ def constant_flux_temp(
 
 
 def constant_flux_area(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
 ):
     # solve the constant flux problem:
     xgens, gens = calc.update_constant_flux(
-        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
 
     # make the figure:

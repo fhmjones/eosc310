@@ -29,7 +29,7 @@ Albedo = {
     "w": 0.75,
     "b": 0.25,
 }  # Albedo vector [uninhabitated Planet , White daisies, Black daisies]
-initial_areas = {"w": 0.01, "b": 0.01}
+areas = {"w": 0.01, "b": 0.01}
 
 ## growth optimum Temp of the white daisies
 T_opt = {"w": 22.5 + 273.15}  # in Kelvin
@@ -49,10 +49,30 @@ Fsnom = 3668  # nominal Flux in W/m^2
 
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    Fsnom,
+    Albedo,
+    rat,
+    em_p,
+    sig,
+    ins_p,
+    death,
+    minarea,
+    T_min,
+    T_opt,
+    areas,
 )
 constant_flux_area = plot.constant_flux_area(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    Fsnom,
+    Albedo,
+    rat,
+    em_p,
+    sig,
+    ins_p,
+    death,
+    minarea,
+    T_min,
+    T_opt,
+    areas,
 )
 
 varying_solar_flux_temp = plot.varying_solar_flux_temp(
@@ -143,23 +163,23 @@ app.layout = html.Div(
         ### first column of sliders:
         html.Div(
             [
-                dcc.Markdown(""" Initial white daisy area:"""),
+                dcc.Markdown(""" Initial white daisy area: """),
                 dcc.Slider(
                     id="Sw0",
                     min=0.01,
                     max=0.5,
                     step=0.01,
-                    value=initial_areas["w"],
+                    value=areas["w"],
                     marks={0.01: "0.01", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                dcc.Markdown(""" Initial black daisy area: """),
+                dcc.Markdown(""" Initial black daisy area:"""),
                 dcc.Slider(
                     id="Sb0",
-                    min=0,
+                    min=0.01,
                     max=0.5,
                     step=0.01,
-                    value=initial_areas["b"],
+                    value=areas["b"],
                     marks={0.01: "0.01", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
@@ -275,13 +295,17 @@ app.layout = html.Div(
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
     Input(component_id="Ap", component_property="value"),
+    Input(component_id="Sw0", component_property="value"),
+    Input(component_id="Sb0", component_property="value"),
 )
-def update_constant_flux_temp(Aw, Ab, Ap):
+def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
+    areas["w"] = Sw0
+    areas["b"] = Sb0
     return plot.constant_flux_temp(
-        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
 
 
@@ -290,13 +314,17 @@ def update_constant_flux_temp(Aw, Ab, Ap):
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
     Input(component_id="Ap", component_property="value"),
+    Input(component_id="Sw0", component_property="value"),
+    Input(component_id="Sb0", component_property="value"),
 )
-def update_constant_flux_area(Aw, Ab, Ap):
+def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
+    areas["w"] = Sw0
+    areas["b"] = Sb0
     return plot.constant_flux_area(
-        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
 
 
