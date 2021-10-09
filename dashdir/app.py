@@ -40,7 +40,10 @@ Fsnom = 3668  # nominal Flux in W/m^2
 
 ##############################
 albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
-constant_flux_plot = plot.constant_flux_plot(
+constant_flux_temp = plot.constant_flux_temp(
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+)
+constant_flux_area = plot.constant_flux_area(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
 
@@ -151,7 +154,13 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Graph(id="constant_flux_plot"),
+                dcc.Graph(id="constant_flux_temp"),
+            ],
+            style={"width": "100%", "display": "inline-block"},
+        ),
+        html.Div(
+            [
+                dcc.Graph(id="constant_flux_area"),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
@@ -181,16 +190,31 @@ app.layout = html.Div(
 )
 #################
 @app.callback(
-    Output(component_id="constant_flux_plot", component_property="figure"),
+    Output(component_id="constant_flux_temp", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
     Input(component_id="Ap", component_property="value"),
 )
-def update_constant_flux_plot(Aw, Ab, Ap):
+def update_constant_flux_temp(Aw, Ab, Ap):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
-    return plot.constant_flux_plot(
+    return plot.constant_flux_temp(
+        Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
+    )
+
+
+@app.callback(
+    Output(component_id="constant_flux_area", component_property="figure"),
+    Input(component_id="Aw", component_property="value"),
+    Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
+)
+def update_constant_flux_area(Aw, Ab, Ap):
+    Albedo["w"] = Aw
+    Albedo["b"] = Ab
+    Albedo["none"] = Ap
+    return plot.constant_flux_area(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
     )
 
