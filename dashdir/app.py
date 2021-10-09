@@ -1,21 +1,24 @@
 # file app.py
 
-# bastardizing this model for now at https://github.com/strawpants/daisyworld
-# http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
+# bastardizing this model for now from: https://github.com/strawpants/daisyworld
+# nice words about daisyworld at: http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
+
 
 import dash
 from dash import dcc
 from dash import html
-from dash.development.base_component import Component
-import plotly.graph_objects as go
 from dash.dependencies import Input, Output
+import plotly.graph_objects as go
+
 
 import plotting as plot
 
+# Dashboard preliminaries:
 es = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 app = dash.Dash(__name__, external_stylesheets=es)
 
+# Daisyworld preliminaries:
 # initial parameter values
 sig = 5.670373e-8  # Stefan Boltzmann constant [W m^-2 K^-4]
 ins_p = 0.2  # Insulation factor (0...1)
@@ -26,6 +29,7 @@ Albedo = {
     "w": 0.75,
     "b": 0.25,
 }  # Albedo vector [uninhabitated Planet , White daisies, Black daisies]
+initial_areas = {"w": 0.01, "b": 0.01}
 
 ## growth optimum Temp of the white daisies
 T_opt = {"w": 22.5 + 273.15}  # in Kelvin
@@ -37,10 +41,13 @@ T_opt["b"] = T_opt["w"]
 T_min["b"] = T_min["w"]
 death["b"] = death["w"]
 minarea = 0.01  # minimum area as a fraction occupied by each species
+
+# FIXME:
+# This needs to be changed as a function of solar distance!
 Fsnom = 3668  # nominal Flux in W/m^2
 
-##############################
-# albedo_plot = plot.initialize_albedo_plot(T_min, T_opt)
+
+# Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
@@ -133,7 +140,47 @@ app.layout = html.Div(
                 "margin-left": 20,
             },
         ),
-        ###
+        ### first column of sliders:
+        html.Div(
+            [
+                dcc.Markdown(""" Initial white daisy area:"""),
+                dcc.Slider(
+                    id="Sw0",
+                    min=0.01,
+                    max=0.5,
+                    step=0.01,
+                    value=initial_areas["w"],
+                    marks={0.01: "0.01", 0.5: "0.5"},
+                    tooltip={"always_visible": True, "placement": "topLeft"},
+                ),
+                dcc.Markdown(""" Initial black daisy area: """),
+                dcc.Slider(
+                    id="Sb0",
+                    min=0,
+                    max=0.5,
+                    step=0.01,
+                    value=initial_areas["b"],
+                    marks={0.01: "0.01", 0.5: "0.5"},
+                    tooltip={"always_visible": True, "placement": "topLeft"},
+                ),
+                dcc.Markdown("""Distance from Sun (AU) **NOT IMPLEMENTED**"""),
+                dcc.Slider(
+                    id="r",
+                    min=0,
+                    max=1,
+                    step=0.05,
+                    value=1,  # CHANGE THIS
+                    marks={0.5: "0.5", 1.5: "1.5"},
+                    tooltip={"always_visible": True, "placement": "topRight"},
+                ),
+            ],
+            style={
+                "width": "37%",
+                "display": "inline-block",
+                "vertical-align": "top",
+            },
+        ),
+        ### second column of sliders:
         html.Div(
             [
                 dcc.Markdown(""" White daisy albedo:"""),
@@ -146,7 +193,6 @@ app.layout = html.Div(
                     marks={0.5: "0.5", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                ###
                 dcc.Markdown(""" Black daisy albedo: """),
                 dcc.Slider(
                     id="Ab",
@@ -157,7 +203,6 @@ app.layout = html.Div(
                     marks={0: "0", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                ###
                 dcc.Markdown(""" Background albedo:"""),
                 dcc.Slider(
                     id="Ap",
@@ -168,7 +213,6 @@ app.layout = html.Div(
                     marks={0: "0", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
-                ###
             ],
             style={
                 "width": "37%",
@@ -178,17 +222,16 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Graph(id="constant_flux_temp"),
+                dcc.Graph(id="constant_flux_area"),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
         html.Div(
             [
-                dcc.Graph(id="constant_flux_area"),
+                dcc.Graph(id="constant_flux_temp"),
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
-        ##
         html.Div(
             [
                 dcc.Graph(figure=varying_solar_flux_temp),
@@ -201,7 +244,6 @@ app.layout = html.Div(
             ],
             style={"width": "100%", "display": "inline-block"},
         ),
-        ##
         html.Div(
             [
                 dcc.Markdown(
@@ -226,7 +268,8 @@ app.layout = html.Div(
     ],
     style={"width": "1000px"},
 )
-#################
+
+# App callbacks to update figures with slider input:
 @app.callback(
     Output(component_id="constant_flux_temp", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
