@@ -88,6 +88,11 @@ app.layout = html.Div(
             to modify the temperature. We sketch out the elements of a biological 
             feedback system which might help regulate the temperature of the earth."
             - From [BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT: THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
+            ___
+            To add: 
+            - Two sliders for initial daisy proportions
+            - Slider for distance from Sun (0.5 AU to 1.5 AU)
+
             """
                 ),
             ],
@@ -141,15 +146,7 @@ app.layout = html.Div(
                     marks={0.5: "0.5", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-            ],
-            style={
-                "width": "37%",
-                "display": "inline-block",
-                "vertical-align": "top",
-            },
-        ),
-        html.Div(
-            [
+                ###
                 dcc.Markdown(""" Black daisy albedo: """),
                 dcc.Slider(
                     id="Ab",
@@ -160,11 +157,7 @@ app.layout = html.Div(
                     marks={0: "0", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-            ],
-            style={"width": "37%", "display": "inline-block", "vertical-align": "top"},
-        ),
-        html.Div(
-            [
+                ###
                 dcc.Markdown(""" Background albedo:"""),
                 dcc.Slider(
                     id="Ap",
@@ -175,6 +168,7 @@ app.layout = html.Div(
                     marks={0: "0", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
+                ###
             ],
             style={
                 "width": "37%",
