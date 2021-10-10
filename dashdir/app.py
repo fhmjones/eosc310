@@ -48,8 +48,6 @@ minarea = 0.01  # minimum area as a fraction occupied by each species
 solar_distance = calc.fromAU(1)
 Fsnom = calc.update_solar_constant(solar_distance)
 
-#%%
-
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
     Fsnom,
@@ -120,8 +118,8 @@ app.layout = html.Div(
             - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             ___
             To add: 
-            - Two sliders for initial daisy proportions
-            - Slider for distance from Sun (0.5 AU to 1.5 AU)
+            - Subplots (first two together, last two together)
+            - Some sort of 2D map representation of the daisies
 
             """
                 ),

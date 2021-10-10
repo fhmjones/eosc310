@@ -76,6 +76,7 @@ def constant_flux_temp(
             x=gens,
             y=[x["Tw"] - 273.15 for x in xgens],
             name="White daisies temperature",
+            line=dict(color="lightskyblue"),
         )
     )
     fig.add_trace(
@@ -83,17 +84,21 @@ def constant_flux_temp(
             x=gens,
             y=[x["Tb"] - 273.15 for x in xgens],
             name="Black daisies temperature",
+            line=dict(color="darkslategray"),
         )
     )
     fig.add_trace(
         go.Scatter(
-            x=gens, y=[x["Tp"] - 273.15 for x in xgens], name="Planet temperature"
+            x=gens,
+            y=[x["Tp"] - 273.15 for x in xgens],
+            name="Planet temperature",
+            line=dict(color="sienna"),
         )
     )
 
     fig.update_layout(xaxis_title="Generation number", yaxis_title="Temperature [degC]")
     fig.update_xaxes(range=[0, len(gens)])
-    fig.update_yaxes(range=[0, 50])
+    fig.update_yaxes(range=[0, 40])
     fig.layout.title = "Constant flux temperature with daisy generation"
     return fig
 
@@ -122,15 +127,30 @@ def constant_flux_area(
     fig.update_xaxes(showgrid=True, zeroline=False)
     fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=True)
     fig.add_trace(
-        go.Scatter(x=gens, y=[x["Sw"] for x in xgens], name="White daisies area"),
+        go.Scatter(
+            x=gens,
+            y=[x["Sw"] for x in xgens],
+            name="White daisies area",
+            line=dict(color="lightskyblue"),
+        ),
         secondary_y=False,
     )
     fig.add_trace(
-        go.Scatter(x=gens, y=[x["Sb"] for x in xgens], name="Black daisies area"),
+        go.Scatter(
+            x=gens,
+            y=[x["Sb"] for x in xgens],
+            name="Black daisies area",
+            line=dict(color="darkslategray"),
+        ),
         secondary_y=False,
     )
     fig.add_trace(
-        go.Scatter(x=gens, y=[x["Su"] for x in xgens], name="Uninhabited area"),
+        go.Scatter(
+            x=gens,
+            y=[x["Su"] for x in xgens],
+            name="Uninhabited area",
+            line=dict(color="sienna"),
+        ),
         secondary_y=False,
     )
     fig.add_trace(
@@ -138,7 +158,7 @@ def constant_flux_area(
             x=gens,
             y=[x["Ap"] for x in xgens],
             name="Combined albedo",
-            line=dict(color="royalblue", dash="dot"),
+            line=dict(color="royalblue", dash="dash"),
         ),
         secondary_y=True,
     )
@@ -182,7 +202,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tw"] - 273.15 for x in xeq],
             name="White daisies temperature",
-            line=dict(color="royalblue"),
+            line=dict(color="lightskyblue"),
         ),
     )
     fig.add_trace(
@@ -190,7 +210,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tw"] - 273.15 for x in xeqinv],
             name="White daisies temperature (backwards)",
-            line=dict(color="royalblue", dash="dot"),
+            line=dict(color="lightskyblue", dash="dot"),
         ),
     )
     fig.add_trace(
@@ -198,7 +218,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tb"] - 273.15 for x in xeq],
             name="Black daisies temperature",
-            line=dict(color="red"),
+            line=dict(color="darkslategray"),
         ),
     )
     fig.add_trace(
@@ -206,7 +226,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tb"] - 273.15 for x in xeqinv],
             name="Black daisies temperature (backwards)",
-            line=dict(color="red", dash="dot"),
+            line=dict(color="darkslategray", dash="dot"),
         ),
     )
     fig.add_trace(
@@ -214,7 +234,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeq],
             name="Planet temperature",
-            line=dict(color="black"),
+            line=dict(color="sienna"),
         ),
     )
     fig.add_trace(
@@ -222,7 +242,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeqinv],
             name="Planet temperature (backwards)",
-            line=dict(color="black", dash="dot"),
+            line=dict(color="sienna", dash="dot"),
         ),
     )
     fig.add_trace(
@@ -270,7 +290,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeq],
             name="White daisies area",
-            line=dict(color="blue"),
+            line=dict(color="lightskyblue"),
         ),
     )
     fig.add_trace(
@@ -278,7 +298,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeqinv],
             name="White daisies area (backwards)",
-            line=dict(color="blue", dash="dot"),
+            line=dict(color="lightskyblue", dash="dot"),
         ),
     )
     fig.add_trace(
@@ -286,7 +306,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sb"] for x in xeq],
             name="Black daisies area",
-            line=dict(color="red"),
+            line=dict(color="darkslategray"),
         ),
     )
     fig.add_trace(
@@ -294,7 +314,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sb"] for x in xeqinv],
             name="Black daisies area (backwards)",
-            line=dict(color="red", dash="dot"),
+            line=dict(color="darkslategray", dash="dot"),
         ),
     )
     fig.add_trace(
@@ -302,7 +322,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Su"] for x in xeq],
             name="Uninhabited area",
-            line=dict(color="black"),
+            line=dict(color="sienna"),
         ),
     )
     fig.add_trace(
@@ -310,7 +330,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Su"] for x in xeqinv],
             name="Uninhabited area (backwards)",
-            line=dict(color="black", dash="dot"),
+            line=dict(color="sienna", dash="dot"),
         ),
     )
 
