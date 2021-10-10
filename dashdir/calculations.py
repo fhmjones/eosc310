@@ -222,3 +222,18 @@ def update_constant_flux(
     gens = [i for i in range(ngen)]
 
     return xgens, gens
+
+
+def update_solar_constant(solar_distance):
+    luminosity = 10e26
+    # nominal flux in W/m^2
+    F = luminosity / (4 * np.pi * (solar_distance ** 2))
+    return F
+
+
+def toAU(distance):
+    return distance / 1.496e11
+
+
+def fromAU(distance):
+    return distance * 1.496e11
