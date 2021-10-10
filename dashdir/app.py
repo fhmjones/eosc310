@@ -116,11 +116,7 @@ app.layout = html.Div(
             to modify the temperature. We sketch out the elements of a biological 
             feedback system which might help regulate the temperature of the earth."
             - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
-            ___
-            To add: 
-            - Subplots (first two together, last two together)
-            - Some sort of 2D map representation of the daisies
-
+            __
             """
                 ),
             ],
@@ -145,10 +141,9 @@ app.layout = html.Div(
             [
                 dcc.Markdown(
                     """
-                ----------
-                Make an interative plot: Adjust the sliders below to change the albedo of white and black daisies,
-                and of the planetary surface. 
-                """
+                    ___
+                    **Interactive plot:** Adjust the sliders below...
+                    """
                 ),
             ],
             style={
@@ -184,19 +179,19 @@ app.layout = html.Div(
                     marks={0.01: "0.01", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                dcc.Markdown("""Distance from Sun (AU)"""),
-                dcc.Slider(
-                    id="solar_distance",
-                    min=0.8,
-                    max=1.2,
-                    step=0.01,
-                    value=calc.toAU(solar_distance),
-                    marks={0.8: "0.8", 1.2: "1.2"},
-                    tooltip={"always_visible": True, "placement": "topRight"},
-                ),
+                # dcc.Markdown("""Distance from Sun (AU)"""),
+                # dcc.Slider(
+                #     id="solar_distance",
+                #     min=0.8,
+                #     max=1.2,
+                #     step=0.01,
+                #     value=calc.toAU(solar_distance),
+                #     marks={0.8: "0.8", 1.2: "1.2"},
+                #     tooltip={"always_visible": True, "placement": "topRight"},
+                # ),
             ],
             style={
-                "width": "37%",
+                "width": "33%",
                 "display": "inline-block",
                 "vertical-align": "top",
             },
@@ -224,6 +219,26 @@ app.layout = html.Div(
                     marks={0: "0", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
+                # dcc.Markdown(""" Background albedo:"""),
+                # dcc.Slider(
+                #     id="Ap",
+                #     min=0,
+                #     max=1,
+                #     step=0.05,
+                #     value=Albedo["none"],
+                #     marks={0: "0", 1: "1"},
+                #     tooltip={"always_visible": True, "placement": "topRight"},
+                # ),
+            ],
+            style={
+                "width": "33%",
+                "display": "inline-block",
+                "vertical-align": "top",
+            },
+        ),
+        # third column of sliders
+        html.Div(
+            [
                 dcc.Markdown(""" Background albedo:"""),
                 dcc.Slider(
                     id="Ap",
@@ -234,13 +249,22 @@ app.layout = html.Div(
                     marks={0: "0", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
+                ##
+                dcc.Markdown("""Distance from Sun (AU)"""),
+                dcc.Slider(
+                    id="solar_distance",
+                    min=0.8,
+                    max=1.2,
+                    step=0.01,
+                    value=calc.toAU(solar_distance),
+                    marks={0.8: "0.8", 1.2: "1.2"},
+                    tooltip={"always_visible": True, "placement": "topRight"},
+                ),
+                ##
             ],
-            style={
-                "width": "37%",
-                "display": "inline-block",
-                "vertical-align": "top",
-            },
+            style={"width": "33%", "display": "inline-block", "vertical-align": "top"},
         ),
+        ##
         html.Div(
             [
                 dcc.Graph(id="constant_flux_area"),
