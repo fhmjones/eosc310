@@ -45,12 +45,8 @@ T_min["b"] = T_min["w"]
 death["b"] = death["w"]
 minarea = 0.01  # minimum area as a fraction occupied by each species
 
-# FIXME:
-#%%
 solar_distance = calc.fromAU(1)
 Fsnom = calc.update_solar_constant(solar_distance)
-
-#%%
 
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
@@ -119,11 +115,11 @@ app.layout = html.Div(
             curve and is independent of the mechanics by which the biota are assumed 
             to modify the temperature. We sketch out the elements of a biological 
             feedback system which might help regulate the temperature of the earth."
-            - From [**BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT:** THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
+            - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             ___
             To add: 
-            - Two sliders for initial daisy proportions
-            - Slider for distance from Sun (0.5 AU to 1.5 AU)
+            - Subplots (first two together, last two together)
+            - Some sort of 2D map representation of the daisies
 
             """
                 ),
@@ -188,7 +184,7 @@ app.layout = html.Div(
                     marks={0.01: "0.01", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                dcc.Markdown("""Distance from Sun (AU) **NOT IMPLEMENTED**"""),
+                dcc.Markdown("""Distance from Sun (AU)"""),
                 dcc.Slider(
                     id="solar_distance",
                     min=0.8,
