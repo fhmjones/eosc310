@@ -9,9 +9,11 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
+import numpy as np
 
 
 import plotting as plot
+import calculations as calc
 
 # Dashboard preliminaries:
 es = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -31,6 +33,7 @@ Albedo = {
 }  # Albedo vector [uninhabitated Planet , White daisies, Black daisies]
 areas = {"w": 0.01, "b": 0.01}
 
+
 ## growth optimum Temp of the white daisies
 T_opt = {"w": 22.5 + 273.15}  # in Kelvin
 T_min = {"w": 273.15 + 5}  # no growth below this temperature
@@ -43,9 +46,11 @@ death["b"] = death["w"]
 minarea = 0.01  # minimum area as a fraction occupied by each species
 
 # FIXME:
-# This needs to be changed as a function of solar distance!
-Fsnom = 3668  # nominal Flux in W/m^2
+#%%
+solar_distance = calc.fromAU(1)
+Fsnom = calc.update_solar_constant(solar_distance)
 
+#%%
 
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
@@ -114,7 +119,7 @@ app.layout = html.Div(
             curve and is independent of the mechanics by which the biota are assumed 
             to modify the temperature. We sketch out the elements of a biological 
             feedback system which might help regulate the temperature of the earth."
-            - From [BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT: THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
+            - From [**BIOLOGICAL HOMEOSTASIS OF THE GLOBAL ENVIRONMENT:** THE PARABLE OF DAISYWORLD](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             ___
             To add: 
             - Two sliders for initial daisy proportions
@@ -185,12 +190,12 @@ app.layout = html.Div(
                 ),
                 dcc.Markdown("""Distance from Sun (AU) **NOT IMPLEMENTED**"""),
                 dcc.Slider(
-                    id="r",
-                    min=0,
-                    max=1,
-                    step=0.05,
-                    value=1,  # CHANGE THIS
-                    marks={0.5: "0.5", 1.5: "1.5"},
+                    id="solar_distance",
+                    min=0.8,
+                    max=1.2,
+                    step=0.01,
+                    value=calc.toAU(solar_distance),
+                    marks={0.8: "0.8", 1.2: "1.2"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
             ],
@@ -297,13 +302,15 @@ app.layout = html.Div(
     Input(component_id="Ap", component_property="value"),
     Input(component_id="Sw0", component_property="value"),
     Input(component_id="Sb0", component_property="value"),
+    Input(component_id="solar_distance", component_property="value"),
 )
-def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0):
+def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
     areas["w"] = Sw0
     areas["b"] = Sb0
+    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
     return plot.constant_flux_temp(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
@@ -316,13 +323,15 @@ def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0):
     Input(component_id="Ap", component_property="value"),
     Input(component_id="Sw0", component_property="value"),
     Input(component_id="Sb0", component_property="value"),
+    Input(component_id="solar_distance", component_property="value"),
 )
-def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0):
+def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
     areas["w"] = Sw0
     areas["b"] = Sb0
+    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
     return plot.constant_flux_area(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
     )
