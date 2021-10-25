@@ -83,10 +83,10 @@ varying_solar_flux_temp = plot.varying_solar_flux_temp(
 varying_solar_flux_area = plot.varying_solar_flux_area(
     Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 )
-xs = list(range(30))
-ys = [10000 * 1.07 ** i for i in xs]
-fig = go.Figure(data=go.Scatter(x=xs, y=ys))
-fig.update_layout(xaxis_title="Years", yaxis_title="$")
+# xs = list(range(30))
+# ys = [10000 * 1.07 ** i for i in xs]
+# fig = go.Figure(data=go.Scatter(x=xs, y=ys))
+# fig.update_layout(xaxis_title="Years", yaxis_title="$")
 ##
 
 app.layout = html.Div(
@@ -209,6 +209,15 @@ app.layout = html.Div(
                     marks={0.5: "0.5", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
+            ],
+            style={
+                "width": "20%",
+                "display": "inline-block",
+                "horizontal-align": "top",
+            },
+        ),
+        html.Div(
+            [
                 dcc.Markdown(""" Black daisy albedo: """),
                 dcc.Slider(
                     id="Ab",
@@ -219,24 +228,32 @@ app.layout = html.Div(
                     marks={0: "0", 0.5: "0.5"},
                     tooltip={"always_visible": True, "placement": "topLeft"},
                 ),
-                # dcc.Markdown(""" Background albedo:"""),
-                # dcc.Slider(
-                #     id="Ap",
-                #     min=0,
-                #     max=1,
-                #     step=0.05,
-                #     value=Albedo["none"],
-                #     marks={0: "0", 1: "1"},
-                #     tooltip={"always_visible": True, "placement": "topRight"},
-                # ),
             ],
             style={
-                "width": "33%",
+                "width": "20%",
                 "display": "inline-block",
-                "vertical-align": "top",
+                "horizontal-align": "top",
             },
         ),
-        # third column of sliders
+        html.Div(
+            [
+                dcc.Markdown(""" Soil albedo """),
+                dcc.Slider(
+                    id="Ap",
+                    min=0.3,
+                    max=0.7,
+                    step=0.01,
+                    value=Albedo["none"],
+                    marks={0.03: "0.01", 0.7: "0.5"},
+                    tooltip={"always_visible": True, "placement": "topLeft"},
+                ),
+            ],
+            style={
+                "width": "20%",
+                "display": "inline-block",
+                "horizontal-align": "top",
+            },
+        ),
         html.Div(
             [
                 dcc.Markdown("""Insulation factor"""),
@@ -249,6 +266,15 @@ app.layout = html.Div(
                     marks={0: "0", 1: "1"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
+            ],
+            style={
+                "width": "20%",
+                "display": "inline-block",
+                "horizontal-align": "top",
+            },
+        ),
+        html.Div(
+            [
                 ##
                 dcc.Markdown("""Distance from Sun (AU)"""),
                 dcc.Slider(
@@ -260,11 +286,22 @@ app.layout = html.Div(
                     marks={0.8: "0.8", 1.2: "1.2"},
                     tooltip={"always_visible": True, "placement": "topRight"},
                 ),
-                ##
             ],
-            style={"width": "33%", "display": "inline-block", "vertical-align": "top"},
+            style={
+                "width": "20%",
+                "display": "inline-block",
+                "horizontal-align": "top",
+            },
         ),
-        ##
+        #         ##
+        #     ],
+        # style={
+        #     "width": "25%",
+        #     "display": "inline-block",
+        #     "horizontal-align": "top",
+        # },
+        # ),
+        # ##
         dcc.Tabs(
             [
                 dcc.Tab(
@@ -333,18 +370,17 @@ app.layout = html.Div(
     Output(component_id="constant_flux_temp", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
     Input(component_id="ins", component_property="value"),
-    # Input(component_id="Ap", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
     Input(component_id="solar_distance", component_property="value"),
 )
 # def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-# def update_constant_flux_temp(Aw, Ab, Ap, solar_distance):  # with planetary albedo
-def update_constant_flux_temp(Aw, Ab, ins, solar_distance):
+def update_constant_flux_temp(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
-    # Albedo["none"] = Ap
+    Albedo["none"] = Ap
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
@@ -357,18 +393,17 @@ def update_constant_flux_temp(Aw, Ab, ins, solar_distance):
     Output(component_id="constant_flux_area", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
     Input(component_id="ins", component_property="value"),
-    # Input(component_id="Ap", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
     Input(component_id="solar_distance", component_property="value"),
 )
 # def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with i.cs
-# def update_constant_flux_area(Aw, Ab, Ap, solar_distance):  # with planetary albedo
-def update_constant_flux_area(Aw, Ab, ins, solar_distance):
+def update_constant_flux_area(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
-    # Albedo["none"] = Ap
+    Albedo["none"] = Ap
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
@@ -384,18 +419,17 @@ def update_constant_flux_area(Aw, Ab, ins, solar_distance):
     Output(component_id="varying_solar_flux_temp", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
     Input(component_id="ins", component_property="value"),
-    # Input(component_id="Ap", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
     Input(component_id="solar_distance", component_property="value"),
 )
 # def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-# def update_constant_flux_temp(Aw, Ab, Ap, solar_distance):  # with planetary albedo
-def update_varying_flux_temp(Aw, Ab, ins, solar_distance):
+def update_varying_flux_temp(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
-    # Albedo["none"] = Ap
+    Albedo["none"] = Ap
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
@@ -410,18 +444,17 @@ def update_varying_flux_temp(Aw, Ab, ins, solar_distance):
     Output(component_id="varying_solar_flux_area", component_property="figure"),
     Input(component_id="Aw", component_property="value"),
     Input(component_id="Ab", component_property="value"),
+    Input(component_id="Ap", component_property="value"),
     Input(component_id="ins", component_property="value"),
-    # Input(component_id="Ap", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
     Input(component_id="solar_distance", component_property="value"),
 )
 # def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with i.cs
-# def update_constant_flux_area(Aw, Ab, Ap, solar_distance):  # with planetary albedo
-def update_varying_flux_area(Aw, Ab, ins, solar_distance):
+def update_varying_flux_area(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
-    # Albedo["none"] = Ap
+    Albedo["none"] = Ap
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))

@@ -202,7 +202,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tw"] - 273.15 for x in xeq],
             name="White daisies temperature",
-            line=dict(color="lightskyblue"),
+            line=dict(color="lightskyblue", width=5),
         ),
     )
     fig.add_trace(
@@ -210,7 +210,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tw"] - 273.15 for x in xeqinv],
             name="White daisies temperature (backwards)",
-            line=dict(color="lightskyblue", dash="dot"),
+            line=dict(color="lightskyblue", dash="dot", width=5),
         ),
     )
     fig.add_trace(
@@ -218,7 +218,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tb"] - 273.15 for x in xeq],
             name="Black daisies temperature",
-            line=dict(color="darkslategray"),
+            line=dict(color="darkslategray", width=3),
         ),
     )
     fig.add_trace(
@@ -226,7 +226,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tb"] - 273.15 for x in xeqinv],
             name="Black daisies temperature (backwards)",
-            line=dict(color="darkslategray", dash="dot"),
+            line=dict(color="darkslategray", dash="dot", width=3),
         ),
     )
     fig.add_trace(
@@ -234,7 +234,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeq],
             name="Planet temperature",
-            line=dict(color="sienna"),
+            line=dict(color="sienna", width=3),
         ),
     )
     fig.add_trace(
@@ -242,7 +242,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeqinv],
             name="Planet temperature (backwards)",
-            line=dict(color="sienna", dash="dot"),
+            line=dict(color="sienna", dash="dot", width=3),
         ),
     )
     fig.add_trace(
@@ -250,7 +250,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeqbar],
             name="Planet temperature (without life)",
-            line=dict(color="gray", dash="dash"),
+            line=dict(color="gray", dash="dash", width=3),
         ),
     )
 
@@ -290,7 +290,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeq],
             name="White daisies area",
-            line=dict(color="lightskyblue"),
+            line=dict(color="lightskyblue", width=5),
         ),
     )
     fig.add_trace(
@@ -298,7 +298,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeqinv],
             name="White daisies area (backwards)",
-            line=dict(color="lightskyblue", dash="dot"),
+            line=dict(color="lightskyblue", dash="dot", width=5),
         ),
     )
     fig.add_trace(
@@ -306,7 +306,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sb"] for x in xeq],
             name="Black daisies area",
-            line=dict(color="darkslategray"),
+            line=dict(color="darkslategray", width=3),
         ),
     )
     fig.add_trace(
@@ -314,7 +314,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sb"] for x in xeqinv],
             name="Black daisies area (backwards)",
-            line=dict(color="darkslategray", dash="dot"),
+            line=dict(color="darkslategray", dash="dot", width=3),
         ),
     )
     fig.add_trace(
@@ -322,7 +322,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Su"] for x in xeq],
             name="Uninhabited area",
-            line=dict(color="sienna"),
+            line=dict(color="sienna", width=3),
         ),
     )
     fig.add_trace(
@@ -330,7 +330,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Su"] for x in xeqinv],
             name="Uninhabited area (backwards)",
-            line=dict(color="sienna", dash="dot"),
+            line=dict(color="sienna", dash="dot", width=3),
         ),
     )
 
