@@ -89,6 +89,12 @@ varying_solar_flux_area = plot.varying_solar_flux_area(
 # fig.update_layout(xaxis_title="Years", yaxis_title="$")
 ##
 
+slider_style = {
+    "width": "20%",
+    "display": "inline-block",
+    "horizontal-align": "top",
+}
+
 app.layout = html.Div(
     [
         html.Div(
@@ -116,7 +122,51 @@ app.layout = html.Div(
             to modify the temperature. We sketch out the elements of a biological 
             feedback system which might help regulate the temperature of the earth."
             - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
-            __
+            
+            ___ 
+
+            #### Overview: 
+            This is an interactive Daisyworld model that calculates the evolution of the 
+            equilibrium temperature and surface area of daisies in a world that is only
+            populated by two species: black and white daisies.     
+               
+            Because the black and white daisies have different albedos, the relative proportion of black and white daisies
+            affects the amount of solar radiation which is absorbed or reflected back into space. 
+            The radiative balance of the planet is thus coupled to the growth of each species
+            of daisy. Likewise however, the growth of daisies is sensitive to the planetary
+            temperature: too cold or too cold, the daisies won't be able to grow. What results is
+            a feedback system between life on the planet and the planet itself.    
+            
+
+            This model is divided into two parts: the first one considers a planet orbiting a
+            star that is outputting a constant solar flux with time: this is characteristic of
+            older, more mature stars such as
+            our present Sun. Early in Earth's evolution however, the young Sun is expected to emit only about
+            70 percent of what it emits today.  The second part of the model considers what happens when the amount 
+            of solar energy emitted by the star increases with time, such as for younger stars. 
+            
+            ___
+            ##### Slider legend: 
+
+            1. **White daisy albedo**: controls the albedo (reflectivity) of white daisies. Higher values 
+            mean more solar radiation is reflected back into space.  
+            2. **Black daisy albedo**: controls the albedo of black daisies. A lower albedo means more solar
+            radation is absorbed the the daisies.   
+            3. **Soil albedo**: the albedo of the background of Daisyworld in which the 
+            daisies grow. Uninhabited areas are covered in soil, which has an albedo
+            in between that of the white daisies and the black daisies.   
+            4. **Insulation factor**: controls how much heat energy the daisies can hold onto after absorbing
+            solar radiation. If the planet would be a perfect insulator (insulation = 1), regions with black and 
+            white daisies would have a different temperature, and they would behave as if the whole
+            planet was covered with black or white daisies respectively. In contrast, if the planet
+            would be a perfect conductor (insulation = 0) the temperature would be constant over the complete planet.    
+            5. **Distance from Sun [AU]**: controls how far the planet is from it's star and thus how much solar
+            radiation can reach the surface to heat it. Units are in Astronomical Units (AU), roughly
+            equal to the Earth-Sun distance.   
+
+            
+
+
             """
                 ),
             ],
@@ -137,25 +187,6 @@ app.layout = html.Div(
         #     style={"width": "100%", "display": "inline-block"},
         # ),
         ###
-        html.Div(
-            [
-                dcc.Markdown(
-                    """
-                    ___
-                    **Interactive plot:** Adjust the sliders below...
-                    """
-                ),
-            ],
-            style={
-                "width": "100%",
-                "display": "inline-block",
-                "padding": "0 20",
-                "vertical-align": "middle",
-                "margin-bottom": 30,
-                "margin-right": 50,
-                "margin-left": 20,
-            },
-        ),
         ### first column of sliders:
         # html.Div(
         #     [
@@ -179,136 +210,107 @@ app.layout = html.Div(
         #         #     marks={0.01: "0.01", 0.5: "0.5"},
         #         #     tooltip={"always_visible": True, "placement": "topLeft"},
         #         # ),
-        #         # dcc.Markdown("""Distance from Sun (AU)"""),
-        #         # dcc.Slider(
-        #         #     id="solar_distance",
-        #         #     min=0.8,
-        #         #     max=1.2,
-        #         #     step=0.01,
-        #         #     value=calc.toAU(solar_distance),
-        #         #     marks={0.8: "0.8", 1.2: "1.2"},
-        #         #     tooltip={"always_visible": True, "placement": "topRight"},
-        #         # ),
-        #     ],
-        #     style={
-        #         "width": "33%",
-        #         "display": "inline-block",
-        #         "vertical-align": "top",
-        #     },
-        # ),
-        ### second column of sliders:
-        html.Div(
-            [
-                dcc.Markdown(""" White daisy albedo:"""),
-                dcc.Slider(
-                    id="Aw",
-                    min=0.5,
-                    max=1,
-                    step=0.05,
-                    value=Albedo["w"],
-                    marks={0.5: "0.5", 1: "1"},
-                    tooltip={"always_visible": True, "placement": "topLeft"},
-                ),
-            ],
-            style={
-                "width": "20%",
-                "display": "inline-block",
-                "horizontal-align": "top",
-            },
-        ),
-        html.Div(
-            [
-                dcc.Markdown(""" Black daisy albedo: """),
-                dcc.Slider(
-                    id="Ab",
-                    min=0,
-                    max=0.5,
-                    step=0.05,
-                    value=Albedo["b"],
-                    marks={0: "0", 0.5: "0.5"},
-                    tooltip={"always_visible": True, "placement": "topLeft"},
-                ),
-            ],
-            style={
-                "width": "20%",
-                "display": "inline-block",
-                "horizontal-align": "top",
-            },
-        ),
-        html.Div(
-            [
-                dcc.Markdown(""" Soil albedo """),
-                dcc.Slider(
-                    id="Ap",
-                    min=0.3,
-                    max=0.7,
-                    step=0.01,
-                    value=Albedo["none"],
-                    marks={0.03: "0.01", 0.7: "0.5"},
-                    tooltip={"always_visible": True, "placement": "topLeft"},
-                ),
-            ],
-            style={
-                "width": "20%",
-                "display": "inline-block",
-                "horizontal-align": "top",
-            },
-        ),
-        html.Div(
-            [
-                dcc.Markdown("""Insulation factor"""),
-                dcc.Slider(
-                    id="ins",
-                    min=0,
-                    max=1,
-                    step=0.05,
-                    value=ins_p,
-                    marks={0: "0", 1: "1"},
-                    tooltip={"always_visible": True, "placement": "topRight"},
-                ),
-            ],
-            style={
-                "width": "20%",
-                "display": "inline-block",
-                "horizontal-align": "top",
-            },
-        ),
-        html.Div(
-            [
-                ##
-                dcc.Markdown("""Distance from Sun (AU)"""),
-                dcc.Slider(
-                    id="solar_distance",
-                    min=0.8,
-                    max=1.2,
-                    step=0.01,
-                    value=calc.toAU(solar_distance),
-                    marks={0.8: "0.8", 1.2: "1.2"},
-                    tooltip={"always_visible": True, "placement": "topRight"},
-                ),
-            ],
-            style={
-                "width": "20%",
-                "display": "inline-block",
-                "horizontal-align": "top",
-            },
-        ),
-        #         ##
-        #     ],
-        # style={
-        #     "width": "25%",
-        #     "display": "inline-block",
-        #     "horizontal-align": "top",
-        # },
-        # ),
-        # ##
+        #       ),
         dcc.Tabs(
             [
                 dcc.Tab(
-                    label="Part 1:",
+                    label="Constant solar flux",
                     children=[
                         html.Div(
                             [
+                                ###
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" White daisy albedo:"""),
+                                        dcc.Slider(
+                                            id="Aw_1",
+                                            min=0.5,
+                                            max=1,
+                                            step=0.05,
+                                            value=Albedo["w"],
+                                            marks={0.5: "0.5", 1: "1"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" Black daisy albedo: """),
+                                        dcc.Slider(
+                                            id="Ab_1",
+                                            min=0,
+                                            max=0.5,
+                                            step=0.05,
+                                            value=Albedo["b"],
+                                            marks={0: "0", 0.5: "0.5"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" Soil albedo """),
+                                        dcc.Slider(
+                                            id="Ap_1",
+                                            min=0.3,
+                                            max=0.7,
+                                            step=0.01,
+                                            value=Albedo["none"],
+                                            marks={0.03: "0.01", 0.7: "0.5"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown("""Insulation factor"""),
+                                        dcc.Slider(
+                                            id="ins_1",
+                                            min=0,
+                                            max=1,
+                                            step=0.05,
+                                            value=ins_p,
+                                            marks={0: "0", 1: "1"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topRight",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        ##
+                                        dcc.Markdown("""Distance from Sun (AU)"""),
+                                        dcc.Slider(
+                                            id="solar_distance",
+                                            min=0.8,
+                                            max=1.2,
+                                            step=0.01,
+                                            value=calc.toAU(solar_distance),
+                                            marks={0.8: "0.8", 1.2: "1.2"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topRight",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                ###
                                 dcc.Graph(id="constant_flux_area"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
@@ -322,10 +324,84 @@ app.layout = html.Div(
                     ],
                 ),
                 dcc.Tab(
-                    label="Part 2",
+                    label="Varying solar flux",
                     children=[
                         html.Div(
                             [
+                                ###
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" White daisy albedo:"""),
+                                        dcc.Slider(
+                                            id="Aw_2",
+                                            min=0.5,
+                                            max=1,
+                                            step=0.05,
+                                            value=Albedo["w"],
+                                            marks={0.5: "0.5", 1: "1"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" Black daisy albedo: """),
+                                        dcc.Slider(
+                                            id="Ab_2",
+                                            min=0,
+                                            max=0.5,
+                                            step=0.05,
+                                            value=Albedo["b"],
+                                            marks={0: "0", 0.5: "0.5"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown(""" Soil albedo """),
+                                        dcc.Slider(
+                                            id="Ap_2",
+                                            min=0.3,
+                                            max=0.7,
+                                            step=0.01,
+                                            value=Albedo["none"],
+                                            marks={0.03: "0.01", 0.7: "0.5"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topLeft",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Markdown("""Insulation factor"""),
+                                        dcc.Slider(
+                                            id="ins_2",
+                                            min=0,
+                                            max=1,
+                                            step=0.05,
+                                            value=ins_p,
+                                            marks={0: "0", 1: "1"},
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "topRight",
+                                            },
+                                        ),
+                                    ],
+                                    style=slider_style,
+                                ),
+                                ###
                                 dcc.Graph(id="varying_solar_flux_temp"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
@@ -347,6 +423,7 @@ app.layout = html.Div(
                 #### Sources
                 
                 1. Methods from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld) by Roelof Rietbroek
+                2. [Detailed readings](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2006RG000217)
                 ----------
                 """
                 ),
@@ -365,17 +442,10 @@ app.layout = html.Div(
     style={"width": "1000px"},
 )
 
-# App callbacks to update figures with slider input:
-@app.callback(
-    Output(component_id="constant_flux_temp", component_property="figure"),
-    Input(component_id="Aw", component_property="value"),
-    Input(component_id="Ab", component_property="value"),
-    Input(component_id="Ap", component_property="value"),
-    Input(component_id="ins", component_property="value"),
-    # Input(component_id="Sw0", component_property="value"),
-    # Input(component_id="Sb0", component_property="value"),
-    Input(component_id="solar_distance", component_property="value"),
-)
+
+# Local functions to clean up app callbacks:
+# not very well implemented but it's something for now:
+
 # def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
 def update_constant_flux_temp(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
@@ -389,17 +459,6 @@ def update_constant_flux_temp(Aw, Ab, Ap, ins, solar_distance):
     )
 
 
-@app.callback(
-    Output(component_id="constant_flux_area", component_property="figure"),
-    Input(component_id="Aw", component_property="value"),
-    Input(component_id="Ab", component_property="value"),
-    Input(component_id="Ap", component_property="value"),
-    Input(component_id="ins", component_property="value"),
-    # Input(component_id="Sw0", component_property="value"),
-    # Input(component_id="Sb0", component_property="value"),
-    Input(component_id="solar_distance", component_property="value"),
-)
-# def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with i.cs
 def update_constant_flux_area(Aw, Ab, Ap, ins, solar_distance):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
@@ -411,28 +470,13 @@ def update_constant_flux_area(Aw, Ab, Ap, ins, solar_distance):
         Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
     )
 
-    ## APP CALLBACKS FOR VARYING FLUX PLOTS:
-    # App callbacks to update figures with slider input:
 
-
-@app.callback(
-    Output(component_id="varying_solar_flux_temp", component_property="figure"),
-    Input(component_id="Aw", component_property="value"),
-    Input(component_id="Ab", component_property="value"),
-    Input(component_id="Ap", component_property="value"),
-    Input(component_id="ins", component_property="value"),
-    # Input(component_id="Sw0", component_property="value"),
-    # Input(component_id="Sb0", component_property="value"),
-    Input(component_id="solar_distance", component_property="value"),
-)
-# def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-def update_varying_flux_temp(Aw, Ab, Ap, ins, solar_distance):
+def update_varying_flux_temp(Aw, Ab, Ap, ins):
     Albedo["w"] = Aw
     Albedo["b"] = Ab
     Albedo["none"] = Ap
     # areas["w"] = Sw0
     # areas["b"] = Sb0
-    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
     # return plot.constant_flux_temp(
     #     Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
     return plot.varying_solar_flux_temp(
@@ -440,26 +484,53 @@ def update_varying_flux_temp(Aw, Ab, Ap, ins, solar_distance):
     )
 
 
+def update_varying_flux_area(Aw, Ab, Ap, ins):
+    Albedo["w"] = Aw
+    Albedo["b"] = Ab
+    Albedo["none "] = Ap
+    # areas["w"] = Sw0
+    # areas["b"] = Sb0
+    # Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
+    return plot.varying_solar_flux_area(
+        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt
+    )
+
+
+# App callbacks to update figures with slider input:
 @app.callback(
-    Output(component_id="varying_solar_flux_area", component_property="figure"),
-    Input(component_id="Aw", component_property="value"),
-    Input(component_id="Ab", component_property="value"),
-    Input(component_id="Ap", component_property="value"),
-    Input(component_id="ins", component_property="value"),
+    Output(component_id="constant_flux_temp", component_property="figure"),
+    Output(component_id="constant_flux_area", component_property="figure"),
+    Input(component_id="Aw_1", component_property="value"),
+    Input(component_id="Ab_1", component_property="value"),
+    Input(component_id="Ap_1", component_property="value"),
+    Input(component_id="ins_1", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
     Input(component_id="solar_distance", component_property="value"),
 )
-# def update_constant_flux_area(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with i.cs
-def update_varying_flux_area(Aw, Ab, Ap, ins, solar_distance):
-    Albedo["w"] = Aw
-    Albedo["b"] = Ab
-    Albedo["none"] = Ap
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return plot.varying_solar_flux_area(
-        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt
+def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, solar_distance):
+    return update_constant_flux_temp(
+        Aw_1, Ab_1, Ap_1, ins_1, solar_distance
+    ), update_constant_flux_area(Aw_1, Ab_1, Ap_1, ins_1, solar_distance)
+
+
+## APP CALLBACKS FOR VARYING FLUX PLOTS:
+# App callbacks to update figures with slider input:
+
+
+@app.callback(
+    Output(component_id="varying_solar_flux_temp", component_property="figure"),
+    Output(component_id="varying_solar_flux_area", component_property="figure"),
+    Input(component_id="Aw_2", component_property="value"),
+    Input(component_id="Ab_2", component_property="value"),
+    Input(component_id="Ap_2", component_property="value"),
+    Input(component_id="ins_2", component_property="value"),
+    # Input(component_id="Sw0", component_property="value"),
+    # Input(component_id="Sb0", component_property="value"),
+)
+def update_varying_flux_figures(Aw_2, Ab_2, Ap_2, ins_2):
+    return update_varying_flux_temp(Aw_2, Ab_2, Ap_2, ins_2), update_varying_flux_area(
+        Aw_2, Ab_2, Ap_2, ins_2
     )
 
 
