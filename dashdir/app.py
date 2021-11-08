@@ -92,51 +92,45 @@ app.layout = html.Div(
                 dcc.Markdown(
                     """
             ### Welcome to Daisyworld!
-            
-            ----------  
-            The biota have effected profound changes on the environment 
-            of the surface of the earth. At the same time, that environment has 
-            imposed constraints on the biota, so that life and the environment 
-            may be considered as two parts of a coupled system. Unfortunately, the 
-            system is too complex and too little known for us to model it adequately. 
+            ___ 
+            #### Overview: 
+            The biota have effected 
+            profound changes on the environment of the surface of the earth. At the same 
+            time, that environment has  imposed constraints on the biota, so that life 
+            and the environment may be considered as two parts of a coupled system. 
+            Unfortunately, the system is too complex and too little known for us to model it adequately. 
             To investigate the properties which this close-coupling might confer on 
-            the system, we chose to develop a model of an imaginary planet having 
-            a very simple biosphere. It consisted of just two species of daisy of 
-            different colours and was first described by Lovelock (1982). 
+            the system, we investigate  a model of an imaginary planet having 
+            a very simple biosphere. It consists of just two species of daisy of 
+            different colours and was first described by Lovelock (1982).    
+               
             The growth rate of the daisies depends on only one environmental 
             variable, temperature, which the daisies in turn modify because they 
             absorb different amounts of radiation. Regardless of the details of the 
             interaction, the effect of the daisies is to stabilize the temperature. 
             The result arises because of the peaked shape of the growth-temperature 
             curve and is independent of the mechanics by which the biota are assumed 
-            to modify the temperature. We sketch out the elements of a biological 
-            feedback system which might help regulate the temperature of the earth."
-            - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
-            
-            ___ 
-
-            **<add a photo here>**
-
-            #### Overview: 
-            This is an interactive Daisyworld model that calculates the evolution of the 
-            equilibrium temperature and surface area of daisies in a world that is only
-            populated by two species: black and white daisies.     
-               
-            Because the black and white daisies have different albedos, the relative proportion of black and white daisies
+            to modify the temperature. Because the black and white daisies have different
+            albedos, the relative proportion of black and white daisies
             affects the amount of solar radiation which is absorbed or reflected back into space. 
             The radiative balance of the planet is thus coupled to the growth of each species
             of daisy. Likewise however, the growth of daisies is sensitive to the planetary
-            temperature: too cold or too cold, the daisies won't be able to grow. What results is
-            a feedback system between life on the planet and the planet itself.    
+            temperature: too cold or too cold, the daisies won't be able to grow.  
             
 
-            This model is divided into two parts: the first one considers a planet orbiting a
+            This is an interactive Daisyworld model that calculates the evolution of the 
+            equilibrium temperature and surface area of daisies. This model is divided into two 
+            parts: the first one considers a planet orbiting a
             star that is outputting a constant solar flux with time: this is characteristic of
-            older, more mature stars such as
-            our present Sun. Early in Earth's evolution however, the young Sun is expected to emit only about
-            70 percent of what it emits today.  The second part of the model considers what happens when the amount 
+            older, more mature stars such as our present Sun. Early in Earth's evolution however,
+            the young Sun is expected to emit only about 70 percent of what it emits today. 
+            The second part of the model considers what happens when the amount 
             of solar energy emitted by the star increases with time, such as for younger stars. 
-            
+            """
+                ),
+                html.Img(src=app.get_asset_url("Daisyworld_pict.jpeg")),
+                dcc.Markdown(
+                    """
             ___
             ##### Slider legend: 
 
@@ -152,12 +146,9 @@ app.layout = html.Div(
             white daisies would have a different temperature, and they would behave as if the whole
             planet was covered with black or white daisies respectively. In contrast, if the planet
             would be a perfect conductor (insulation = 0) the temperature would be constant over the complete planet.    
-            5. **Distance from Sun [AU]**: controls how far the planet is from it's star and thus how much solar
+            5. **Distance from Sun (AU)**: controls how far the planet is from it's star and therefore how much solar
             radiation can reach the surface to heat it. Units are in Astronomical Units (AU), roughly
             equal to the Earth-Sun distance.   
-
-            
-
 
             """
                 ),
@@ -384,6 +375,7 @@ app.layout = html.Div(
                 
                 1. Methods from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld) by Roelof Rietbroek
                 2. [Detailed readings](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2006RG000217)
+                3. [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
                 ----------
                 """
                 ),
