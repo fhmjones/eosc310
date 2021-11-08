@@ -76,7 +76,7 @@ def constant_flux_temp(
             x=gens,
             y=[x["Tw"] - 273.15 for x in xgens],
             name="White daisies temperature",
-            line=dict(color="khaki", width=8),
+            line=dict(color="lavender", width=8),
         )
     )
     fig.add_trace(
@@ -92,7 +92,7 @@ def constant_flux_temp(
             x=gens,
             y=[x["Tp"] - 273.15 for x in xgens],
             name="Planet temperature",
-            line=dict(color="seagreen", width=4),
+            line=dict(color="seagreen", width=5, dash="dot"),
         )
     )
 
@@ -100,7 +100,7 @@ def constant_flux_temp(
     fig.update_xaxes(range=[0, len(gens)])
     fig.update_yaxes(range=[10, 40])
     fig.layout.title = "Constant flux temperature with daisy generation"
-    fig.update_layout(plot_bgcolor="lightgray")
+    fig.update_layout(plot_bgcolor="silver")
     return fig
 
 
@@ -132,7 +132,7 @@ def constant_flux_area(
             x=gens,
             y=[x["Sw"] for x in xgens],
             name="White daisies area",
-            line=dict(color="khaki", width=8),
+            line=dict(color="lavender", width=8),
         ),
         secondary_y=False,
     )
@@ -171,7 +171,7 @@ def constant_flux_area(
     fig.update_yaxes(range=[0, 1])
     fig.layout.title = "Constant flux daisy coverage"
     # fig.update_layout(paper_bgcolor="black")
-    fig.update_layout(plot_bgcolor="lightgray")
+    fig.update_layout(plot_bgcolor="silver")
 
     return fig
 
@@ -205,7 +205,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tw"] - 273.15 for x in xeq],
             name="White daisies temperature",
-            line=dict(color="khaki", width=7),
+            line=dict(color="lavender", width=7),
         ),
     )
     # fig.add_trace(
@@ -237,7 +237,7 @@ def varying_solar_flux_temp(
             x=F,
             y=[x["Tp"] - 273.15 for x in xeq],
             name="Planet temperature",
-            line=dict(color="seagreen", width=3),
+            line=dict(color="seagreen", width=5, dash="dot"),
         ),
     )
     # fig.add_trace(
@@ -260,7 +260,7 @@ def varying_solar_flux_temp(
     fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
     fig.update_yaxes(title="Temperature [degC]", range=[-20, 80])
     fig.update_layout(title_text="Equilibrium temperature vs solar flux")
-    fig.update_layout(plot_bgcolor="lightgray")
+    fig.update_layout(plot_bgcolor="silver")
 
     return fig
 
@@ -294,7 +294,7 @@ def varying_solar_flux_area(
             x=F,
             y=[x["Sw"] for x in xeq],
             name="White daisies area",
-            line=dict(color="khaki", width=7),
+            line=dict(color="lavender", width=7),
         ),
     )
     # fig.add_trace(
@@ -341,7 +341,7 @@ def varying_solar_flux_area(
     fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
     fig.update_yaxes(title="Fractional area", range=[0, 1])
     fig.update_layout(title_text="Equilibrium area vs solar flux")
-    fig.update_layout(plot_bgcolor="lightgray")
+    fig.update_layout(plot_bgcolor="silver")
     return fig
 
 
