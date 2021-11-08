@@ -1,6 +1,6 @@
 # file app.py
 
-# bastardizing this model for now from: https://github.com/strawpants/daisyworld
+# based on this model for now from: https://github.com/strawpants/daisyworld
 # nice words about daisyworld at: http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
 
 
@@ -92,6 +92,7 @@ app.layout = html.Div(
                 dcc.Markdown(
                     """
             ### Welcome to Daisyworld!
+            #### EOSC 310: Assignment 4
             ___ 
             #### Overview: 
             The biota have effected 
@@ -102,22 +103,27 @@ app.layout = html.Div(
             To investigate the properties which this close-coupling might confer on 
             the system, we investigate  a model of an imaginary planet having 
             a very simple biosphere. It consists of just two species of daisy of 
-            different colours and was first described by Lovelock (1982).    
-               
+            different colours and was first described by Lovelock (1982).
+            """
+                ),
+                html.Img(src=app.get_asset_url("Daisyworld_pict.jpeg")),
+                dcc.Markdown(
+                    """
+            Because the black and white daisies have different
+            albedos, the relative proportion of black and white daisies
+            affects the amount of solar radiation which is absorbed or reflected back into space. 
+            The radiative balance of the planet is thus coupled to the growth of each species
+            of daisy. Likewise however, the growth of daisies is sensitive to the planetary
+            temperature: too cold or too cold, the daisies won't be able to grow.  
             The growth rate of the daisies depends on only one environmental 
             variable, temperature, which the daisies in turn modify because they 
             absorb different amounts of radiation. Regardless of the details of the 
             interaction, the effect of the daisies is to stabilize the temperature. 
             The result arises because of the peaked shape of the growth-temperature 
             curve and is independent of the mechanics by which the biota are assumed 
-            to modify the temperature. Because the black and white daisies have different
-            albedos, the relative proportion of black and white daisies
-            affects the amount of solar radiation which is absorbed or reflected back into space. 
-            The radiative balance of the planet is thus coupled to the growth of each species
-            of daisy. Likewise however, the growth of daisies is sensitive to the planetary
-            temperature: too cold or too cold, the daisies won't be able to grow.  
+            to modify the temperature. 
             
-
+            ___
             This is an interactive Daisyworld model that calculates the evolution of the 
             equilibrium temperature and surface area of daisies. This model is divided into two 
             parts: the first one considers a planet orbiting a
@@ -128,7 +134,6 @@ app.layout = html.Div(
             of solar energy emitted by the star increases with time, such as for younger stars. 
             """
                 ),
-                html.Img(src=app.get_asset_url("Daisyworld_pict.jpeg")),
                 dcc.Markdown(
                     """
             ___
@@ -142,10 +147,8 @@ app.layout = html.Div(
             daisies grow. Uninhabited areas are covered in soil, which has an albedo
             in between that of the white daisies and the black daisies.   
             4. **Insulation factor**: controls how much heat energy the daisies can hold onto after absorbing
-            solar radiation. If the planet would be a perfect insulator (insulation = 1), regions with black and 
-            white daisies would have a different temperature, and they would behave as if the whole
-            planet was covered with black or white daisies respectively. In contrast, if the planet
-            would be a perfect conductor (insulation = 0) the temperature would be constant over the complete planet.    
+            solar radiation. If the planet were a perfect conductor (insulation = 0) the temperature would be
+            constant over the complete planet (instantaneous heat transfer between regions).    
             5. **Distance from Sun (AU)**: controls how far the planet is from it's star and therefore how much solar
             radiation can reach the surface to heat it. Units are in Astronomical Units (AU), roughly
             equal to the Earth-Sun distance.   
@@ -375,7 +378,7 @@ app.layout = html.Div(
                 
                 1. Methods from [DaisyWorld Jupyter Notebook](https://github.com/strawpants/daisyworld) by Roelof Rietbroek
                 2. [Detailed readings](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2006RG000217)
-                3. [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
+                3. [Biological Homestatis of the Global Environment: The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
                 ----------
                 """
                 ),
@@ -394,58 +397,8 @@ app.layout = html.Div(
     style={"width": "1000px"},
 )
 
-#%%
-print("ye")
-#%%# Local functions to clean up app callbacks:
-# not very well implemented but it's something for now:
 
-# def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-def update_constant_flux_temp(Aw, Ab, Ap, ins, distance):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
-    return plot.constant_flux_temp(**live_vars, areas=areas)
-
-
-def update_constant_flux_area(Aw, Ab, Ap, ins, distance):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
-    return plot.constant_flux_area(**live_vars, areas=areas)
-
-
-def update_varying_flux_temp(Aw, Ab, Ap, ins):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    # return plot.constant_flux_temp(
-    #     Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
-    return plot.varying_solar_flux_temp(**live_vars)
-
-
-def update_varying_flux_area(Aw, Ab, Ap, ins):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    # Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return plot.varying_solar_flux_area(**live_vars)
-
-
-# Reset :
+# pair of callback functions to reset sliders to init_vars
 @app.callback(
     Output("Aw_1", "value"),
     Output("Ab_1", "value"),
@@ -480,7 +433,7 @@ def reset_tab2(reset_button_2):
     )
 
 
-# App callbacks to update figures with slider input:
+# callback for constant flux sliders:
 @app.callback(
     Output(component_id="constant_flux_temp", component_property="figure"),
     Output(component_id="constant_flux_area", component_property="figure"),
@@ -493,13 +446,14 @@ def reset_tab2(reset_button_2):
     Input(component_id="distance", component_property="value"),
 )
 def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
-    return update_constant_flux_temp(
-        Aw_1, Ab_1, Ap_1, ins_1, distance
-    ), update_constant_flux_area(Aw_1, Ab_1, Ap_1, ins_1, distance)
+    return plot.update_constant_flux_temp(
+        live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance, areas
+    ), plot.update_constant_flux_area(
+        live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance, areas
+    )
 
 
-## APP CALLBACKS FOR VARYING FLUX PLOTS:
-# App callbacks to update figures with slider input:
+# callback for varying flux sliders:
 @app.callback(
     Output(component_id="varying_solar_flux_temp", component_property="figure"),
     Output(component_id="varying_solar_flux_area", component_property="figure"),
@@ -511,9 +465,9 @@ def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
     # Input(component_id="Sb0", component_property="value"),
 )
 def update_varying_flux_figures(Aw_2, Ab_2, Ap_2, ins_2):
-    return update_varying_flux_temp(Aw_2, Ab_2, Ap_2, ins_2), update_varying_flux_area(
-        Aw_2, Ab_2, Ap_2, ins_2
-    )
+    return plot.update_varying_flux_temp(
+        live_vars, Aw_2, Ab_2, Ap_2, ins_2
+    ), plot.update_varying_flux_area(live_vars, Aw_2, Ab_2, Ap_2, ins_2)
 
 
 if __name__ == "__main__":
