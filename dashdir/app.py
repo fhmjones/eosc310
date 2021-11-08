@@ -4,12 +4,14 @@
 # nice words about daisyworld at: http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
 
 
+from os import TMP_MAX
 import dash
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import numpy as np
+import copy
 
 
 import plotting as plot
@@ -33,7 +35,6 @@ Albedo = {
 }  # Albedo vector [uninhabitated Planet , White daisies, Black daisies]
 areas = {"w": 0.01, "b": 0.01}
 
-
 ## growth optimum Temp of the white daisies
 T_opt = {"w": 22.5 + 273.15}  # in Kelvin
 T_min = {"w": 273.15 + 5}  # no growth below this temperature
@@ -48,46 +49,35 @@ minarea = 0.01  # minimum area as a fraction occupied by each species
 solar_distance = calc.fromAU(1)
 Fsnom = calc.update_solar_constant(solar_distance)
 
+init_vars = dict(
+    Fsnom=Fsnom,
+    Albedo=Albedo,
+    rat=rat,
+    em_p=em_p,
+    sig=sig,
+    ins_p=ins_p,
+    death=death,
+    minarea=minarea,
+    T_min=T_min,
+    T_opt=T_opt,
+)
+
+# deepcopy of init_vars for callbacks:
+live_vars = copy.deepcopy(init_vars)
+
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
-    Fsnom,
-    Albedo,
-    rat,
-    em_p,
-    sig,
-    ins_p,
-    death,
-    minarea,
-    T_min,
-    T_opt,
-    areas,
+    **init_vars,
+    areas=areas,
 )
 constant_flux_area = plot.constant_flux_area(
-    Fsnom,
-    Albedo,
-    rat,
-    em_p,
-    sig,
-    ins_p,
-    death,
-    minarea,
-    T_min,
-    T_opt,
-    areas,
+    **init_vars,
+    areas=areas,
 )
 
-varying_solar_flux_temp = plot.varying_solar_flux_temp(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
-)
+varying_solar_flux_temp = plot.varying_solar_flux_temp(**init_vars)
+varying_solar_flux_area = plot.varying_solar_flux_area(**init_vars)
 
-varying_solar_flux_area = plot.varying_solar_flux_area(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
-)
-# xs = list(range(30))
-# ys = [10000 * 1.07 ** i for i in xs]
-# fig = go.Figure(data=go.Scatter(x=xs, y=ys))
-# fig.update_layout(xaxis_title="Years", yaxis_title="$")
-##
 
 slider_style = {
     "width": "20%",
@@ -124,6 +114,8 @@ app.layout = html.Div(
             - From [**Biological Homestatis of the Global Environment:** The Parable of Daisyworld](http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/)
             
             ___ 
+
+            **<add a photo here>**
 
             #### Overview: 
             This is an interactive Daisyworld model that calculates the evolution of the 
@@ -180,37 +172,6 @@ app.layout = html.Div(
                 "margin-left": 20,
             },
         ),
-        # html.Div(
-        #     [
-        #         dcc.Graph(figure=albedo_plot),
-        #     ],
-        #     style={"width": "100%", "display": "inline-block"},
-        # ),
-        ###
-        ### first column of sliders:
-        # html.Div(
-        #     [
-        #         # dcc.Markdown(""" Initial white daisy area: """),
-        #         # dcc.Slider(
-        #         #     id="Sw0",
-        #         #     min=0.01,
-        #         #     max=0.5,
-        #         #     step=0.01,
-        #         #     value=areas["w"],
-        #         #     marks={0.01: "0.01", 0.5: "0.5"},
-        #         #     tooltip={"always_visible": True, "placement": "topLeft"},
-        #         # ),
-        #         # dcc.Markdown(""" Initial black daisy area:"""),
-        #         # dcc.Slider(
-        #         #     id="Sb0",
-        #         #     min=0.01,
-        #         #     max=0.5,
-        #         #     step=0.01,
-        #         #     value=areas["b"],
-        #         #     marks={0.01: "0.01", 0.5: "0.5"},
-        #         #     tooltip={"always_visible": True, "placement": "topLeft"},
-        #         # ),
-        #       ),
         dcc.Tabs(
             [
                 dcc.Tab(
@@ -296,7 +257,7 @@ app.layout = html.Div(
                                         ##
                                         dcc.Markdown("""Distance from Sun (AU)"""),
                                         dcc.Slider(
-                                            id="solar_distance",
+                                            id="distance",
                                             min=0.8,
                                             max=1.2,
                                             step=0.01,
@@ -310,6 +271,8 @@ app.layout = html.Div(
                                     ],
                                     style=slider_style,
                                 ),
+                                ###
+                                html.Button("Reset", id="reset_button", n_clicks=0),
                                 ###
                                 dcc.Graph(id="constant_flux_area"),
                             ],
@@ -402,6 +365,8 @@ app.layout = html.Div(
                                     style=slider_style,
                                 ),
                                 ###
+                                html.Button("Reset", id="reset_button_2", n_clicks=0),
+                                ###
                                 dcc.Graph(id="varying_solar_flux_temp"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
@@ -442,57 +407,89 @@ app.layout = html.Div(
     style={"width": "1000px"},
 )
 
-
-# Local functions to clean up app callbacks:
+#%%
+print("ye")
+#%%# Local functions to clean up app callbacks:
 # not very well implemented but it's something for now:
 
 # def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-def update_constant_flux_temp(Aw, Ab, Ap, ins, solar_distance):
-    Albedo["w"] = Aw
-    Albedo["b"] = Ab
-    Albedo["none"] = Ap
+def update_constant_flux_temp(Aw, Ab, Ap, ins, distance):
+    live_vars["Albedo"]["w"] = Aw
+    live_vars["Albedo"]["b"] = Ab
+    live_vars["Albedo"]["none"] = Ap
+    live_vars["ins_p"] = ins
     # areas["w"] = Sw0
     # areas["b"] = Sb0
-    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return plot.constant_flux_temp(
-        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
-    )
+    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
+    return plot.constant_flux_temp(**live_vars, areas=areas)
 
 
-def update_constant_flux_area(Aw, Ab, Ap, ins, solar_distance):
-    Albedo["w"] = Aw
-    Albedo["b"] = Ab
-    Albedo["none"] = Ap
+def update_constant_flux_area(Aw, Ab, Ap, ins, distance):
+    live_vars["Albedo"]["w"] = Aw
+    live_vars["Albedo"]["b"] = Ab
+    live_vars["Albedo"]["none"] = Ap
+    live_vars["ins_p"] = ins
     # areas["w"] = Sw0
     # areas["b"] = Sb0
-    Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return plot.constant_flux_area(
-        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
-    )
+    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
+    return plot.constant_flux_area(**live_vars, areas=areas)
 
 
 def update_varying_flux_temp(Aw, Ab, Ap, ins):
-    Albedo["w"] = Aw
-    Albedo["b"] = Ab
-    Albedo["none"] = Ap
+    live_vars["Albedo"]["w"] = Aw
+    live_vars["Albedo"]["b"] = Ab
+    live_vars["Albedo"]["none"] = Ap
+    live_vars["ins_p"] = ins
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     # return plot.constant_flux_temp(
     #     Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
-    return plot.varying_solar_flux_temp(
-        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt
-    )
+    return plot.varying_solar_flux_temp(**live_vars)
 
 
 def update_varying_flux_area(Aw, Ab, Ap, ins):
-    Albedo["w"] = Aw
-    Albedo["b"] = Ab
-    Albedo["none "] = Ap
+    live_vars["Albedo"]["w"] = Aw
+    live_vars["Albedo"]["b"] = Ab
+    live_vars["Albedo"]["none"] = Ap
+    live_vars["ins_p"] = ins
     # areas["w"] = Sw0
     # areas["b"] = Sb0
     # Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return plot.varying_solar_flux_area(
-        Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt
+    return plot.varying_solar_flux_area(**live_vars)
+
+
+# Reset :
+@app.callback(
+    Output("Aw_1", "value"),
+    Output("Ab_1", "value"),
+    Output("Ap_1", "value"),
+    Output("ins_1", "value"),
+    Output("distance", "value"),
+    Input("reset_button", "n_clicks"),
+)
+def reset_tab1(reset_button):
+    return (
+        init_vars["Albedo"]["w"],
+        init_vars["Albedo"]["b"],
+        init_vars["Albedo"]["none"],
+        init_vars["ins_p"],
+        1,
+    )
+
+
+@app.callback(
+    Output("Aw_2", "value"),
+    Output("Ab_2", "value"),
+    Output("Ap_2", "value"),
+    Output("ins_2", "value"),
+    Input("reset_button_2", "n_clicks"),
+)
+def reset_tab2(reset_button_2):
+    return (
+        init_vars["Albedo"]["w"],
+        init_vars["Albedo"]["b"],
+        init_vars["Albedo"]["none"],
+        init_vars["ins_p"],
     )
 
 
@@ -506,18 +503,16 @@ def update_varying_flux_area(Aw, Ab, Ap, ins):
     Input(component_id="ins_1", component_property="value"),
     # Input(component_id="Sw0", component_property="value"),
     # Input(component_id="Sb0", component_property="value"),
-    Input(component_id="solar_distance", component_property="value"),
+    Input(component_id="distance", component_property="value"),
 )
-def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, solar_distance):
+def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
     return update_constant_flux_temp(
-        Aw_1, Ab_1, Ap_1, ins_1, solar_distance
-    ), update_constant_flux_area(Aw_1, Ab_1, Ap_1, ins_1, solar_distance)
+        Aw_1, Ab_1, Ap_1, ins_1, distance
+    ), update_constant_flux_area(Aw_1, Ab_1, Ap_1, ins_1, distance)
 
 
 ## APP CALLBACKS FOR VARYING FLUX PLOTS:
 # App callbacks to update figures with slider input:
-
-
 @app.callback(
     Output(component_id="varying_solar_flux_temp", component_property="figure"),
     Output(component_id="varying_solar_flux_area", component_property="figure"),
