@@ -292,6 +292,7 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 ###
+                                ###
                                 html.Div(
                                     [
                                         dcc.Markdown(""" White daisy albedo:"""),
@@ -366,13 +367,7 @@ app.layout = html.Div(
                                 ),
                                 ###
                                 html.Button("Reset", id="reset_button_2", n_clicks=0),
-                                ###
                                 dcc.Graph(id="varying_solar_flux_temp"),
-                            ],
-                            style={"width": "100%", "display": "inline-block"},
-                        ),
-                        html.Div(
-                            [
                                 dcc.Graph(id="varying_solar_flux_area"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
