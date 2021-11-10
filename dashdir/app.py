@@ -218,7 +218,7 @@ app.layout = html.Div(
                                             max=0.7,
                                             step=0.01,
                                             value=Albedo["none"],
-                                            marks={0.03: "0.01", 0.7: "0.5"},
+                                            marks={0.3: "0.3", 0.7: "0.7"},
                                             tooltip={
                                                 "always_visible": True,
                                                 "placement": "topLeft",
