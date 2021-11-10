@@ -4,7 +4,6 @@
 # nice words about daisyworld at: http://www.jameslovelock.org/biological-homeostasis-of-the-global-environment-the-parable-of-daisyworld/
 
 
-from os import TMP_MAX
 import dash
 from dash import dcc
 from dash import html
