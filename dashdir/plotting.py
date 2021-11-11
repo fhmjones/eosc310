@@ -96,7 +96,9 @@ def constant_flux_temp(
         )
     )
 
-    fig.update_layout(xaxis_title="Generation number", yaxis_title="Temperature [degC]")
+    fig.update_layout(
+        xaxis_title="Time (Daisy generation)", yaxis_title="Temperature [degC]"
+    )
     fig.update_xaxes(range=[0, len(gens)])
     fig.update_yaxes(range=[10, 40])
     fig.layout.title = "Constant flux temperature with daisy generation"
@@ -164,11 +166,12 @@ def constant_flux_area(
         secondary_y=True,
     )
     # fig.update_layout(xaxis_title="Generation number", yaxis_title="Fractional area")
-    fig.update_xaxes(title_text="Generation")
+    fig.update_xaxes(title_text="Time (Daisy generation)")
     fig.update_yaxes(title_text="Fractional area", secondary_y=False)
     fig.update_yaxes(title_text="Albedo", secondary_y=True)
     fig.update_xaxes(range=[0, len(gens)])
-    fig.update_yaxes(range=[0, 1])
+    fig.update_yaxes(range=[0, 1], secondary_y=False)
+    fig.update_yaxes(range=[0.35, 0.65], secondary_y=True)
     fig.layout.title = "Constant flux daisy coverage"
     # fig.update_layout(paper_bgcolor="black")
     fig.update_layout(plot_bgcolor="silver")
