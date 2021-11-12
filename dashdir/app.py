@@ -21,10 +21,10 @@ es = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = dash.Dash(__name__, external_stylesheets=es)
 
 # Load any markdown files to insert into the app:
-instructions = open("instructions.md", "r")
+instructions = open("./assets/instructions.md", "r")
 instructions_md = instructions.read()
 
-attributions = open("attributions.md", "r")
+attributions = open("./assets/attributions.md", "r")
 attributions_md = attributions.read()
 
 # Load the dictionary of initial parameters:
