@@ -1,4 +1,10 @@
 ##### Instructions: 
+This is an interactive Daisyworld model that calculates the evolution of the 
+equilibrium temperature and surface area of daisies. This model is divided into two 
+parts: the first one considers a planet orbiting a
+star that is outputting a constant solar flux with time, and the second part of the  
+model considers what happens when the amount of solar energy emitted by
+the star changes with time. 
 
 1. **White daisy albedo**: controls the albedo (reflectivity) of white daisies. Higher values 
 mean more solar radiation is reflected back into space.  
