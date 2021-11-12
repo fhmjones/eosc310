@@ -12,6 +12,7 @@ import copy
 import json
 
 import plotting as plot
+import calculations as calc
 
 
 # Dashboard preliminaries:
@@ -330,8 +331,7 @@ def reset_tab2(reset_button_2):
     )
 
 
-# TAB 1:
-# callback to update figures for constant flux sliders:
+# TAB 1: callbacks to update figures for constant flux sliders:
 @app.callback(
     Output(component_id="constant_flux_temp", component_property="figure"),
     Output(component_id="constant_flux_area", component_property="figure"),
@@ -342,13 +342,15 @@ def reset_tab2(reset_button_2):
     Input(component_id="distance", component_property="value"),
 )
 def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
-    return plot.update_constant_flux_temp(
-        live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance
-    ), plot.update_constant_flux_area(live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance)
+    live_vars["Albedo"]["w"] = Aw_1
+    live_vars["Albedo"]["b"] = Ab_1
+    live_vars["Albedo"]["none"] = Ap_1
+    live_vars["ins_p"] = ins_1
+    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
+    return plot.constant_flux_temp(**live_vars), plot.constant_flux_area(**live_vars)
 
 
-# TAB 2:
-# callback to update figures for varying flux sliders:
+# TAB 2: callbacks to update figures for varying flux sliders:
 @app.callback(
     Output(component_id="varying_solar_flux_temp", component_property="figure"),
     Output(component_id="varying_solar_flux_area", component_property="figure"),
@@ -358,9 +360,13 @@ def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
     Input(component_id="ins_2", component_property="value"),
 )
 def update_varying_flux_figures(Aw_2, Ab_2, Ap_2, ins_2):
-    return plot.update_varying_flux_temp(
-        live_vars, Aw_2, Ab_2, Ap_2, ins_2
-    ), plot.update_varying_flux_area(live_vars, Aw_2, Ab_2, Ap_2, ins_2)
+    live_vars["Albedo"]["w"] = Aw_2
+    live_vars["Albedo"]["b"] = Ab_2
+    live_vars["Albedo"]["none"] = Ap_2
+    live_vars["ins_p"] = ins_2
+    return plot.varying_solar_flux_temp(**live_vars), plot.varying_solar_flux_area(
+        **live_vars
+    )
 
 
 if __name__ == "__main__":
