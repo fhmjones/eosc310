@@ -8,89 +8,51 @@ import dash
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-import plotly.graph_objects as go
-import numpy as np
 import copy
-
+import json
 
 import plotting as plot
 import calculations as calc
+
 
 # Dashboard preliminaries:
 es = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 app = dash.Dash(__name__, external_stylesheets=es)
 
+# Load any markdown files to insert into the app:
 instructions = open("instructions.md", "r")
-instructions_markdown = instructions.read()
+instructions_md = instructions.read()
 
 attributions = open("attributions.md", "r")
-attributions_markdown = attributions.read()
+attributions_md = attributions.read()
 
+# Load the dictionary of initial parameters:
+with open("init_vars.json") as infile:
+    init_vars = json.load(infile)
 
-# Daisyworld preliminaries:
-# initial parameter values
-sig = 5.670373e-8  # Stefan Boltzmann constant [W m^-2 K^-4]
-ins_p = 0.2  # Insulation factor (0...1)
-em_p = 1  # Emmissivity of the Planet (optional)
-rat = 1 / 4  # ratio of cross section versus surface area of the Planet
-Albedo = {
-    "none": 0.5,
-    "w": 0.75,
-    "b": 0.25,
-}  # Albedo vector [uninhabitated Planet , White daisies, Black daisies]
-areas = {"w": 0.01, "b": 0.01}
-
-## growth optimum Temp of the white daisies
-T_opt = {"w": 22.5 + 273.15}  # in Kelvin
-T_min = {"w": 273.15 + 5}  # no growth below this temperature
-death = {"w": 0.3}  # death rate of White daisies (fraction)
-
-# assume the same growth curve for Black daisies (change if needed)
-T_opt["b"] = T_opt["w"]
-T_min["b"] = T_min["w"]
-death["b"] = death["w"]
-minarea = 0.01  # minimum area as a fraction occupied by each species
-
-solar_distance = calc.fromAU(1)
-Fsnom = calc.update_solar_constant(solar_distance)
-
-init_vars = dict(
-    Fsnom=Fsnom,
-    Albedo=Albedo,
-    rat=rat,
-    em_p=em_p,
-    sig=sig,
-    ins_p=ins_p,
-    death=death,
-    minarea=minarea,
-    T_min=T_min,
-    T_opt=T_opt,
-)
-
-# deepcopy of init_vars for callbacks:
+# Deepcopy of init_vars for callbacks:
 live_vars = copy.deepcopy(init_vars)
 
 # Function calls for initializing figures:
 constant_flux_temp = plot.constant_flux_temp(
     **init_vars,
-    areas=areas,
 )
 constant_flux_area = plot.constant_flux_area(
     **init_vars,
-    areas=areas,
 )
-
 varying_solar_flux_temp = plot.varying_solar_flux_temp(**init_vars)
 varying_solar_flux_area = plot.varying_solar_flux_area(**init_vars)
 
 
+# Make a dictionary for slider_style
 slider_style = {
     "width": "20%",
     "display": "inline-block",
     "horizontal-align": "top",
 }
 
+# Main event:
 app.layout = html.Div(
     [
         html.Div(
@@ -101,10 +63,7 @@ app.layout = html.Div(
                  """
                 ),
                 html.Img(src=app.get_asset_url("Daisyworld_pict.jpeg")),
-                dcc.Markdown(
-                    # using the instructions markdown file that was loaded in above
-                    children=instructions_markdown
-                ),
+                dcc.Markdown(children=instructions_md),
             ],
             style={
                 "width": "100%",
@@ -132,7 +91,7 @@ app.layout = html.Div(
                                             min=0.5,
                                             max=1,
                                             step=0.05,
-                                            value=Albedo["w"],
+                                            value=init_vars["Albedo"]["w"],
                                             marks={0.5: "0.5", 1: "1"},
                                             tooltip={
                                                 "always_visible": True,
@@ -150,7 +109,7 @@ app.layout = html.Div(
                                             min=0,
                                             max=0.5,
                                             step=0.05,
-                                            value=Albedo["b"],
+                                            value=init_vars["Albedo"]["b"],
                                             marks={0: "0", 0.5: "0.5"},
                                             tooltip={
                                                 "always_visible": True,
@@ -168,7 +127,7 @@ app.layout = html.Div(
                                             min=0.3,
                                             max=0.7,
                                             step=0.01,
-                                            value=Albedo["none"],
+                                            value=init_vars["Albedo"]["none"],
                                             marks={0.3: "0.3", 0.7: "0.7"},
                                             tooltip={
                                                 "always_visible": True,
@@ -186,7 +145,7 @@ app.layout = html.Div(
                                             min=0,
                                             max=1,
                                             step=0.05,
-                                            value=ins_p,
+                                            value=init_vars["ins_p"],
                                             marks={0: "0", 1: "1"},
                                             tooltip={
                                                 "always_visible": True,
@@ -198,14 +157,13 @@ app.layout = html.Div(
                                 ),
                                 html.Div(
                                     [
-                                        ##
                                         dcc.Markdown("""Distance from Sun (AU)"""),
                                         dcc.Slider(
                                             id="distance",
                                             min=0.8,
                                             max=1.2,
                                             step=0.01,
-                                            value=calc.toAU(solar_distance),
+                                            value=1,
                                             marks={0.8: "0.8", 1.2: "1.2"},
                                             tooltip={
                                                 "always_visible": True,
@@ -215,9 +173,7 @@ app.layout = html.Div(
                                     ],
                                     style=slider_style,
                                 ),
-                                ###
                                 html.Button("Reset", id="reset_button", n_clicks=0),
-                                ###
                                 dcc.Graph(id="constant_flux_area"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
@@ -235,8 +191,6 @@ app.layout = html.Div(
                     children=[
                         html.Div(
                             [
-                                ###
-                                ###
                                 html.Div(
                                     [
                                         dcc.Markdown(""" White daisy albedo:"""),
@@ -245,7 +199,7 @@ app.layout = html.Div(
                                             min=0.5,
                                             max=1,
                                             step=0.05,
-                                            value=Albedo["w"],
+                                            value=init_vars["Albedo"]["w"],
                                             marks={0.5: "0.5", 1: "1"},
                                             tooltip={
                                                 "always_visible": True,
@@ -263,7 +217,7 @@ app.layout = html.Div(
                                             min=0,
                                             max=0.5,
                                             step=0.05,
-                                            value=Albedo["b"],
+                                            value=init_vars["Albedo"]["b"],
                                             marks={0: "0", 0.5: "0.5"},
                                             tooltip={
                                                 "always_visible": True,
@@ -281,7 +235,7 @@ app.layout = html.Div(
                                             min=0.3,
                                             max=0.7,
                                             step=0.01,
-                                            value=Albedo["none"],
+                                            value=init_vars["Albedo"]["none"],
                                             marks={0.03: "0.03", 0.7: "0.7"},
                                             tooltip={
                                                 "always_visible": True,
@@ -299,7 +253,7 @@ app.layout = html.Div(
                                             min=0,
                                             max=1,
                                             step=0.05,
-                                            value=ins_p,
+                                            value=init_vars["ins_p"],
                                             marks={0: "0", 1: "1"},
                                             tooltip={
                                                 "always_visible": True,
@@ -309,7 +263,6 @@ app.layout = html.Div(
                                     ],
                                     style=slider_style,
                                 ),
-                                ###
                                 html.Button("Reset", id="reset_button_2", n_clicks=0),
                                 dcc.Graph(id="varying_solar_flux_temp"),
                                 dcc.Graph(id="varying_solar_flux_area"),
@@ -322,10 +275,7 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Markdown(
-                    # the markdown from the attributions file loaded in above.
-                    children=attributions_markdown
-                ),
+                dcc.Markdown(children=attributions_md),
             ],
             style={
                 "width": "100%",
@@ -337,6 +287,7 @@ app.layout = html.Div(
                 "margin-left": 20,
             },
         ),
+        dcc.Store(id="click_stations", data={}, storage_type="memory"),
     ],
     style={"width": "1000px"},
 )
@@ -380,8 +331,7 @@ def reset_tab2(reset_button_2):
     )
 
 
-# TAB 1:
-# callback to update figures for constant flux sliders:
+# TAB 1: callbacks to update figures for constant flux sliders:
 @app.callback(
     Output(component_id="constant_flux_temp", component_property="figure"),
     Output(component_id="constant_flux_area", component_property="figure"),
@@ -389,20 +339,18 @@ def reset_tab2(reset_button_2):
     Input(component_id="Ab_1", component_property="value"),
     Input(component_id="Ap_1", component_property="value"),
     Input(component_id="ins_1", component_property="value"),
-    # Input(component_id="Sw0", component_property="value"),
-    # Input(component_id="Sb0", component_property="value"),
     Input(component_id="distance", component_property="value"),
 )
 def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
-    return plot.update_constant_flux_temp(
-        live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance, areas
-    ), plot.update_constant_flux_area(
-        live_vars, Aw_1, Ab_1, Ap_1, ins_1, distance, areas
-    )
+    live_vars["Albedo"]["w"] = Aw_1
+    live_vars["Albedo"]["b"] = Ab_1
+    live_vars["Albedo"]["none"] = Ap_1
+    live_vars["ins_p"] = ins_1
+    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
+    return plot.constant_flux_temp(**live_vars), plot.constant_flux_area(**live_vars)
 
 
-# TAB 2:
-# callback to update figures for varying flux sliders:
+# TAB 2: callbacks to update figures for varying flux sliders:
 @app.callback(
     Output(component_id="varying_solar_flux_temp", component_property="figure"),
     Output(component_id="varying_solar_flux_area", component_property="figure"),
@@ -410,13 +358,15 @@ def update_constant_flux_figures(Aw_1, Ab_1, Ap_1, ins_1, distance):
     Input(component_id="Ab_2", component_property="value"),
     Input(component_id="Ap_2", component_property="value"),
     Input(component_id="ins_2", component_property="value"),
-    # Input(component_id="Sw0", component_property="value"),
-    # Input(component_id="Sb0", component_property="value"),
 )
 def update_varying_flux_figures(Aw_2, Ab_2, Ap_2, ins_2):
-    return plot.update_varying_flux_temp(
-        live_vars, Aw_2, Ab_2, Ap_2, ins_2
-    ), plot.update_varying_flux_area(live_vars, Aw_2, Ab_2, Ap_2, ins_2)
+    live_vars["Albedo"]["w"] = Aw_2
+    live_vars["Albedo"]["b"] = Ab_2
+    live_vars["Albedo"]["none"] = Ap_2
+    live_vars["ins_p"] = ins_2
+    return plot.varying_solar_flux_temp(**live_vars), plot.varying_solar_flux_area(
+        **live_vars
+    )
 
 
 if __name__ == "__main__":

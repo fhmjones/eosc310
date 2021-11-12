@@ -49,8 +49,14 @@ def initialize_albedo_plot(T_min, T_opt):
 
 
 def constant_flux_temp(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 ):
+
+    # initial areas are embedded in here but should be passed in as an
+    # argument later if we want to change the initial conditions
+    # externally...
+    areas = {"w": 0.01, "b": 0.01}  # initial conditions for area
+
     # solve the constant flux problem:
     xgens, gens = calc.update_constant_flux(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
@@ -107,8 +113,14 @@ def constant_flux_temp(
 
 
 def constant_flux_area(
-    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
+    Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
 ):
+
+    # initial areas are embedded in here but should be passed in as an
+    # argument later if we want to change the initial conditions
+    # externally...
+    areas = {"w": 0.01, "b": 0.01}  # initial conditions for area
+
     # solve the constant flux problem:
     xgens, gens = calc.update_constant_flux(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt, areas
@@ -167,7 +179,7 @@ def constant_flux_area(
     )
     # fig.update_layout(xaxis_title="Generation number", yaxis_title="Fractional area")
     fig.update_xaxes(title_text="Time (Daisy generation)")
-    fig.update_yaxes(title_text="Fractional area", secondary_y=False)
+    fig.update_yaxes(title_text="Inhabited area", secondary_y=False)
     fig.update_yaxes(title_text="Albedo", secondary_y=True)
     fig.update_xaxes(range=[0, len(gens)])
     fig.update_yaxes(range=[0, 1], secondary_y=False)
@@ -295,7 +307,7 @@ def varying_solar_flux_area(
     fig.add_trace(
         go.Scatter(
             x=F,
-            y=[x["Sw"] for x in xeq],
+            y=[100 * x["Sw"] for x in xeq],
             name="White daisies area",
             line=dict(color="lavender", width=7),
         ),
@@ -311,7 +323,7 @@ def varying_solar_flux_area(
     fig.add_trace(
         go.Scatter(
             x=F,
-            y=[x["Sb"] for x in xeq],
+            y=[100 * x["Sb"] for x in xeq],
             name="Black daisies area",
             line=dict(color="black", width=3),
         ),
@@ -327,7 +339,7 @@ def varying_solar_flux_area(
     fig.add_trace(
         go.Scatter(
             x=F,
-            y=[x["Su"] for x in xeq],
+            y=[100 * x["Su"] for x in xeq],
             name="Uninhabited area",
             line=dict(color="saddlebrown", width=3),
         ),
@@ -342,53 +354,7 @@ def varying_solar_flux_area(
     # )
 
     fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
-    fig.update_yaxes(title="Fractional area", range=[0, 1])
+    fig.update_yaxes(title="Inhabited area [%]", range=[0, 100])
     fig.update_layout(title_text="Equilibrium area vs solar flux")
     fig.update_layout(plot_bgcolor="silver")
     return fig
-
-
-# def update_constant_flux_temp(Aw, Ab, Ap, Sw0, Sb0, solar_distance):  # with initial conditions
-def update_constant_flux_temp(live_vars, Aw, Ab, Ap, ins, distance, areas):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
-    return constant_flux_temp(**live_vars, areas=areas)
-
-
-def update_constant_flux_area(live_vars, Aw, Ab, Ap, ins, distance, areas):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
-    return constant_flux_area(**live_vars, areas=areas)
-
-
-def update_varying_flux_temp(live_vars, Aw, Ab, Ap, ins):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    # return plot.constant_flux_temp(
-    #     Fsnom, Albedo, rat, em_p, sig, ins, death, minarea, T_min, T_opt, areas
-    return varying_solar_flux_temp(**live_vars)
-
-
-def update_varying_flux_area(live_vars, Aw, Ab, Ap, ins):
-    live_vars["Albedo"]["w"] = Aw
-    live_vars["Albedo"]["b"] = Ab
-    live_vars["Albedo"]["none"] = Ap
-    live_vars["ins_p"] = ins
-    # areas["w"] = Sw0
-    # areas["b"] = Sb0
-    # Fsnom = calc.update_solar_constant(calc.fromAU(solar_distance))
-    return varying_solar_flux_area(**live_vars)
