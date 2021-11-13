@@ -44,7 +44,7 @@ varying_solar_flux_temp = plot.varying_solar_flux_temp(**init_vars)
 varying_solar_flux_area = plot.varying_solar_flux_area(**init_vars)
 
 
-# Make a dictionary for slider_style
+# Make a dictionary for slider_style for convenience
 slider_style = {
     "width": "20%",
     "display": "inline-block",
@@ -292,7 +292,9 @@ app.layout = html.Div(
     style={"width": "1000px"},
 )
 
-### Tab 1
+#####################################################################
+# Tab 1 Callbacks
+#####################################################################
 # update memory .json live_vars (dcc.Store(id='tab1_vars)')
 @app.callback(
     Output(component_id="tab1_vars", component_property="data"),
@@ -301,19 +303,14 @@ app.layout = html.Div(
     Input(component_id="Ap_1", component_property="value"),
     Input(component_id="ins_1", component_property="value"),
     Input(component_id="distance", component_property="value"),
-    Input("reset_button", "n_clicks"),
 )
-def update_tab1_vars(Aw_1, Ab_1, Ap_1, ins_1, distance, reset_button):
-    changed_id = [p["prop_id"] for p in callback_context.triggered][0]
-    if "reset_button" in changed_id:
-        return json.dumps(init_vars)  # return a json dict
-    else:
-        live_vars["Albedo"]["w"] = Aw_1
-        live_vars["Albedo"]["b"] = Ab_1
-        live_vars["Albedo"]["none"] = Ap_1
-        live_vars["ins_p"] = ins_1
-        live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
-        return json.dumps(live_vars)  # return a json dict
+def update_tab1_vars(Aw_1, Ab_1, Ap_1, ins_1, distance):
+    live_vars["Albedo"]["w"] = Aw_1
+    live_vars["Albedo"]["b"] = Ab_1
+    live_vars["Albedo"]["none"] = Ap_1
+    live_vars["ins_p"] = ins_1
+    live_vars["Fsnom"] = calc.update_solar_constant(calc.fromAU(distance))
+    return json.dumps(live_vars)  # return a json dict
 
 
 # update figure using the jsonified tab1_vars:
@@ -327,7 +324,28 @@ def update_tab1(jsonified_tab1_vars):
     return plot.constant_flux_temp(**the_dict), plot.constant_flux_area(**the_dict)
 
 
-### Tab 2
+# reset sliders on button input:
+@app.callback(
+    Output("Aw_1", "value"),
+    Output("Ab_1", "value"),
+    Output("Ap_1", "value"),
+    Output("ins_1", "value"),
+    Output("distance", "value"),
+    Input("reset_button", "n_clicks"),
+)
+def reset_tab1(n_clicks):
+    return (
+        init_vars["Albedo"]["w"],
+        init_vars["Albedo"]["b"],
+        init_vars["Albedo"]["none"],
+        init_vars["ins_p"],
+        1,
+    )
+
+
+#####################################################################
+# Tab 2 Callbacks
+#####################################################################
 # update memory .json live_vars (dcc.Store(id='tab2_vars)')
 @app.callback(
     Output(component_id="tab2_vars", component_property="data"),
@@ -335,18 +353,13 @@ def update_tab1(jsonified_tab1_vars):
     Input(component_id="Ab_2", component_property="value"),
     Input(component_id="Ap_2", component_property="value"),
     Input(component_id="ins_2", component_property="value"),
-    Input("reset_button_2", "n_clicks"),
 )
-def update_tab2_vars(Aw_2, Ab_2, Ap_2, ins_2, reset_button_2):
-    changed_id = [p["prop_id"] for p in callback_context.triggered][0]
-    if "reset_button_2" in changed_id:
-        return json.dumps(init_vars)  # return a json dict
-    else:
-        live_vars["Albedo"]["w"] = Aw_2
-        live_vars["Albedo"]["b"] = Ab_2
-        live_vars["Albedo"]["none"] = Ap_2
-        live_vars["ins_p"] = ins_2
-        return json.dumps(live_vars)  # return a json dict
+def update_tab2_vars(Aw_2, Ab_2, Ap_2, ins_2):
+    live_vars["Albedo"]["w"] = Aw_2
+    live_vars["Albedo"]["b"] = Ab_2
+    live_vars["Albedo"]["none"] = Ap_2
+    live_vars["ins_p"] = ins_2
+    return json.dumps(live_vars)  # return a json dict
 
 
 # update the figures using the jsonified tab2_vars:
@@ -359,6 +372,23 @@ def update_tab2(jsonified_tab2_vars):
     the_dict = json.loads(jsonified_tab2_vars)
     return plot.varying_solar_flux_temp(**the_dict), plot.varying_solar_flux_area(
         **the_dict
+    )
+
+
+# Reset sliders on button input:
+@app.callback(
+    Output("Aw_2", "value"),
+    Output("Ab_2", "value"),
+    Output("Ap_2", "value"),
+    Output("ins_2", "value"),
+    Input("reset_button_2", "n_clicks"),
+)
+def reset_tab2(n_clicks):
+    return (
+        init_vars["Albedo"]["w"],
+        init_vars["Albedo"]["b"],
+        init_vars["Albedo"]["none"],
+        init_vars["ins_p"],
     )
 
 
