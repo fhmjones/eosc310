@@ -6,7 +6,7 @@ ___
 1. **White daisy albedo**: controls the albedo (reflectivity) of white daisies. Higher values 
 mean more solar radiation is reflected back into space and the daisies absorb less.
 2. **Black daisy albedo**: controls the albedo of black daisies. A lower albedo means more solar
-radation is absorbed by the daisies.   
+radiation is absorbed by the daisies.   
 3. **Soil albedo**: the albedo of the background of Daisyworld in which the 
 daisies grow. Uninhabited areas are covered in soil which has an albedo
 in between that of the white daisies and the black daisies.   
