@@ -103,7 +103,8 @@ def constant_flux_temp(
     )
 
     fig.update_layout(
-        xaxis_title="Time (Daisy generation)", yaxis_title="Temperature [degC]"
+        xaxis_title="Simulation Time (Daisy generation #)",
+        yaxis_title="Temperature [degC]",
     )
     fig.update_xaxes(range=[0, len(gens)])
     fig.update_yaxes(range=[10, 40])
@@ -140,11 +141,12 @@ def constant_flux_area(
         opacity=1,
     )
     fig.update_xaxes(showgrid=True, zeroline=False)
-    fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=True)
+    fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=False)
+    fig.update_yaxes(showgrid=False, zeroline=False, secondary_y=True)
     fig.add_trace(
         go.Scatter(
             x=gens,
-            y=[x["Sw"] for x in xgens],
+            y=[100 * x["Sw"] for x in xgens],
             name="White daisies area",
             line=dict(color="lavender", width=8),
         ),
@@ -153,7 +155,7 @@ def constant_flux_area(
     fig.add_trace(
         go.Scatter(
             x=gens,
-            y=[x["Sb"] for x in xgens],
+            y=[100 * x["Sb"] for x in xgens],
             name="Black daisies area",
             line=dict(color="black", width=3),
         ),
@@ -162,7 +164,7 @@ def constant_flux_area(
     fig.add_trace(
         go.Scatter(
             x=gens,
-            y=[x["Su"] for x in xgens],
+            y=[100 * x["Su"] for x in xgens],
             name="Uninhabited area",
             line=dict(color="saddlebrown", width=4),
         ),
@@ -178,12 +180,12 @@ def constant_flux_area(
         secondary_y=True,
     )
     # fig.update_layout(xaxis_title="Generation number", yaxis_title="Fractional area")
-    fig.update_xaxes(title_text="Time (Daisy generation)")
-    fig.update_yaxes(title_text="Inhabited area", secondary_y=False)
+    fig.update_xaxes(title_text="Simulation Time (Daisy generation #)")
+    fig.update_yaxes(title_text="Inhabited area [%]", secondary_y=False)
     fig.update_yaxes(title_text="Albedo", secondary_y=True)
     fig.update_xaxes(range=[0, len(gens)])
-    fig.update_yaxes(range=[0, 1], secondary_y=False)
-    fig.update_yaxes(range=[0.35, 0.65], secondary_y=True)
+    fig.update_yaxes(range=[0, 100], secondary_y=False)  # % area
+    fig.update_yaxes(range=[0.35, 0.65], secondary_y=True)  # albedo
     fig.layout.title = "Constant flux daisy coverage"
     # fig.update_layout(paper_bgcolor="black")
     fig.update_layout(plot_bgcolor="silver")
@@ -200,7 +202,11 @@ def varying_solar_flux_temp(
     # fig = go.Figure(data=go.Scatter(x=F, y=[x["Tw"] - 273.15 for x in xeq]))
     ##
     # # fig = make_subplots(rows=1, cols=2, subplot_titles=("Plot1", "Plot2"))
-    fig = go.Figure()
+
+    # make a list of arbitrary times to plot against
+    times = np.arange(0, len(F) + 1, 1)
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_hrect(
         xref="paper",
         yref="paper",
@@ -214,14 +220,25 @@ def varying_solar_flux_temp(
     )
     # # subplot 1
     fig.update_xaxes(showgrid=True, zeroline=False)
-    fig.update_yaxes(showgrid=True, zeroline=False)
+    fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=False)
+    fig.update_yaxes(showgrid=False, zeroline=False, secondary_y=True)
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
+            y=[Fi * Fsnom for Fi in F],
+            name="Solar flux",
+            line=dict(color="rgba(255, 255, 0, 0.3)", width=5),
+        ),
+        secondary_y=True,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=times,
             y=[x["Tw"] - 273.15 for x in xeq],
             name="White daisies temperature",
             line=dict(color="lavender", width=7),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -233,11 +250,12 @@ def varying_solar_flux_temp(
     # )
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
             y=[x["Tb"] - 273.15 for x in xeq],
             name="Black daisies temperature",
             line=dict(color="black", width=3),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -249,11 +267,12 @@ def varying_solar_flux_temp(
     # )
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
             y=[x["Tp"] - 273.15 for x in xeq],
             name="Planet temperature",
             line=dict(color="seagreen", width=5, dash="dot"),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -265,15 +284,21 @@ def varying_solar_flux_temp(
     # )
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
             y=[x["Tp"] - 273.15 for x in xeqbar],
             name="Planet temperature (without life)",
             line=dict(color="gray", dash="dash", width=3),
         ),
+        secondary_y=False,
     )
 
-    fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
-    fig.update_yaxes(title="Temperature [degC]", range=[-20, 80])
+    fig.update_xaxes(title="Simulation Time [Myr]", range=[0, times[-1]])
+    fig.update_yaxes(
+        title="Temperature [degC]",
+        range=[-20, 80],
+        secondary_y=False,
+    )
+    fig.update_yaxes(title_text="Solar flux [Wm-2]", secondary_y=True)
     fig.update_layout(title_text="Equilibrium temperature vs solar flux")
     fig.update_layout(plot_bgcolor="silver")
 
@@ -286,10 +311,13 @@ def varying_solar_flux_area(
     xeq, _, _, F = calc.update_equi_flux(
         Fsnom, Albedo, rat, em_p, sig, ins_p, death, minarea, T_min, T_opt
     )
+
+    # make a list of arbitrary times to plot against
+    times = np.arange(0, len(F) + 1, 1)
     # fig = go.Figure(data=go.Scatter(x=F, y=[x["Tw"] - 273.15 for x in xeq]))
     ##
     # # fig = make_subplots(rows=1, cols=2, subplot_titles=("Plot1", "Plot2"))
-    fig = go.Figure()
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_hrect(
         xref="paper",
         yref="paper",
@@ -303,14 +331,25 @@ def varying_solar_flux_area(
     )
     # # subplot 1
     fig.update_xaxes(showgrid=True, zeroline=False)
-    fig.update_yaxes(showgrid=True, zeroline=False)
+    fig.update_yaxes(showgrid=False, zeroline=False, secondary_y=True)
+    fig.update_yaxes(showgrid=True, zeroline=False, secondary_y=False)
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
+            y=[Fi * Fsnom for Fi in F],
+            name="Solar flux",
+            line=dict(color="rgba(255, 255, 0, 0.3)", width=5),
+        ),
+        secondary_y=True,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=times,
             y=[100 * x["Sw"] for x in xeq],
             name="White daisies area",
             line=dict(color="lavender", width=7),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -322,11 +361,12 @@ def varying_solar_flux_area(
     # )
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
             y=[100 * x["Sb"] for x in xeq],
             name="Black daisies area",
             line=dict(color="black", width=3),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -338,11 +378,12 @@ def varying_solar_flux_area(
     # )
     fig.add_trace(
         go.Scatter(
-            x=F,
+            x=times,
             y=[100 * x["Su"] for x in xeq],
             name="Uninhabited area",
             line=dict(color="saddlebrown", width=3),
         ),
+        secondary_y=False,
     )
     # fig.add_trace(
     #     go.Scatter(
@@ -353,8 +394,13 @@ def varying_solar_flux_area(
     #     ),
     # )
 
-    fig.update_xaxes(title="Solar Flux", range=[0.6, F[-1]])
-    fig.update_yaxes(title="Inhabited area [%]", range=[0, 100])
+    fig.update_xaxes(title="Simulation Time [Myr]", range=[0, times[-1]])
+    fig.update_yaxes(
+        title="Inhabited area [%]",
+        range=[0, 100],
+        secondary_y=False,
+    )
+    fig.update_yaxes(title_text="Solar flux [Wm-2]", secondary_y=True)
     fig.update_layout(title_text="Equilibrium area vs solar flux")
     fig.update_layout(plot_bgcolor="silver")
     return fig

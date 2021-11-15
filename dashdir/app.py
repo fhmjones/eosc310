@@ -142,10 +142,10 @@ app.layout = html.Div(
                                         dcc.Slider(
                                             id="ins_1",
                                             min=0,
-                                            max=1,
+                                            max=0.5,
                                             step=0.05,
                                             value=init_vars["ins_p"],
-                                            marks={0: "0", 1: "1"},
+                                            marks={0: "0", 0.5: "0.5"},
                                             tooltip={
                                                 "always_visible": True,
                                                 "placement": "topRight",
@@ -250,10 +250,10 @@ app.layout = html.Div(
                                         dcc.Slider(
                                             id="ins_2",
                                             min=0,
-                                            max=1,
+                                            max=0.5,
                                             step=0.05,
                                             value=init_vars["ins_p"],
-                                            marks={0: "0", 1: "1"},
+                                            marks={0: "0", 0.5: "0.5"},
                                             tooltip={
                                                 "always_visible": True,
                                                 "placement": "topRight",
@@ -263,8 +263,8 @@ app.layout = html.Div(
                                     style=slider_style,
                                 ),
                                 html.Button("Reset", id="reset_button_2", n_clicks=0),
-                                dcc.Graph(id="varying_solar_flux_temp"),
                                 dcc.Graph(id="varying_solar_flux_area"),
+                                dcc.Graph(id="varying_solar_flux_temp"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
                         ),

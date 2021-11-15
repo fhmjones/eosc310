@@ -24,12 +24,3 @@ The result arises because of the peaked shape of the growth-temperature
 curve and is independent of the mechanics by which the biota are assumed 
 to modify the temperature. 
 
-___
-This is an interactive Daisyworld model that calculates the evolution of the 
-equilibrium temperature and surface area of daisies. This model is divided into two 
-parts: the first one considers a planet orbiting a
-star that is outputting a constant solar flux with time: this is characteristic of
-older, more mature stars such as our present Sun. Early in Earth's evolution however,
-the young Sun is expected to emit only about 70 percent of what it emits today. 
-The second part of the model considers what happens when the amount 
-of solar energy emitted by the star increases with time, such as for younger stars. 
