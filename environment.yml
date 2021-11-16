@@ -8,7 +8,5 @@ dependencies:
   - python = 3.8
   - gunicorn
   - flask
-  - pandas
-  - scikit-image
   - conda-lock
 # conda-lock -f environment.yml -p linux-64
