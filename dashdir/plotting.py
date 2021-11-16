@@ -226,7 +226,7 @@ def varying_solar_flux_temp(
         go.Scatter(
             x=times,
             y=[Fi * Fsnom for Fi in F],
-            name="Solar flux",
+            name="Solar flux (right axis)",
             line=dict(color="rgba(255, 255, 0, 0.3)", width=5),
         ),
         secondary_y=True,
@@ -337,7 +337,7 @@ def varying_solar_flux_area(
         go.Scatter(
             x=times,
             y=[Fi * Fsnom for Fi in F],
-            name="Solar flux",
+            name="Solar flux (right axis)",
             line=dict(color="rgba(255, 255, 0, 0.3)", width=5),
         ),
         secondary_y=True,
